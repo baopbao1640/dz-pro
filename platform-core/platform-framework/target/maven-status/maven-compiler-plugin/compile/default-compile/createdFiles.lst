@@ -1,0 +1,3 @@
+com/platform/core/framework/config/MybatisPlusConfig.class
+com/platform/core/framework/config/RedisConfig.class
+com/platform/core/framework/config/SecurityConfig.class

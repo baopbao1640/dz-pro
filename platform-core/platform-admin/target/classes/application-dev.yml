@@ -1,0 +1,36 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: platform-admin
+  datasource:
+    url: jdbc:postgresql://localhost:5432/platform_core
+    username: platform_admin
+    password: platform_admin
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+  thymeleaf:
+    cache: false
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: platform-client
+            client-secret: "M7Nen8u9VyvaZqQcAkgTdYn2zHAjPgYg"
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
+            scope: openid,profile,email
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/platform
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
