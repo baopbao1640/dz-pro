@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { computed, h, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { Layout, Menu, Button, Dropdown, Avatar, theme } from 'ant-design-vue';
+import { Layout, Menu, Dropdown, Avatar, theme } from 'ant-design-vue';
 import {
   DashboardOutlined,
   UserOutlined,
@@ -12,19 +12,18 @@ import { useUserStore } from '@/store/user';
 const router = useRouter();
 const userStore = useUserStore();
 
-const {
-  token: { colorBgContainer },
-} = theme.useToken();
+const { token } = theme.useToken();
+const colorBgContainer = computed(() => token.value.colorBgContainer);
 
 const menuItems = [
   {
     key: 'dashboard',
-    icon: () => DashboardOutlined(),
+    icon: () => h(DashboardOutlined),
     label: '工作台',
   },
 ];
 
-const handleMenuClick = ({ key }: { key: string }) => {
+const handleMenuClick = ({ key }: { key: PropertyKey }) => {
   router.push({ name: String(key) });
 };
 
@@ -37,7 +36,7 @@ const userMenuItems = [
   { key: 'profile', label: '个人中心' },
   {
     key: 'logout',
-    icon: () => LogoutOutlined(),
+    icon: () => h(LogoutOutlined),
     label: '退出登录',
   },
 ];
@@ -51,7 +50,7 @@ onMounted(() => {
   }
 });
 
-const handleUserMenuClick = ({ key }: { key: string }) => {
+const handleUserMenuClick = ({ key }: { key: PropertyKey }) => {
   if (key === 'logout') {
     handleLogout();
   }
@@ -63,9 +62,11 @@ const handleUserMenuClick = ({ key }: { key: string }) => {
     <Layout.Header class="layout-header">
       <div class="header-left">平台管理系统</div>
       <div class="header-right">
-        <Dropdown :menu="{ items: userMenuItems }" @select="handleUserMenuClick">
+        <Dropdown :menu="{ items: userMenuItems, onClick: handleUserMenuClick }">
           <span class="user-action">
-            <Avatar :size="28" icon="UserOutlined" />
+            <Avatar :size="28">
+              <template #icon><UserOutlined /></template>
+            </Avatar>
             <span class="username">{{ userStore.userInfo?.name || '用户' }}</span>
           </span>
         </Dropdown>
@@ -81,7 +82,7 @@ const handleUserMenuClick = ({ key }: { key: string }) => {
           :selected-keys="[router.currentRoute.value.name as string]"
           :style="{ height: '100%', borderRight: 0 }"
           :items="menuItems"
-          @select="({ key }) => handleMenuClick(key as string)"
+          @select="handleMenuClick"
         />
       </Layout.Sider>
       <Layout.Content

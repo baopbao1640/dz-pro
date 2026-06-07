@@ -15,5 +15,6 @@ try {
   console.log('[main.ts] mounted OK')
 } catch (err) {
   console.error('[main.ts] FATAL', err)
-  document.body.innerHTML = '<pre style="color:red;padding:24px">' + (err && err.stack ? err.stack : String(err)) + '</pre>'
+  const message = err instanceof Error ? err.stack ?? err.message : String(err)
+  document.body.innerHTML = '<pre style="color:red;padding:24px">' + message + '</pre>'
 }

@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import MainLayout from '@/layouts/MainLayout.vue'
 import Login from '@/views/Login.vue'
-import Home from '@/views/Home.vue'
 import OidcCallback from '@/views/OidcCallback.vue'
 import Logout from '@/views/Logout.vue'
 
@@ -46,7 +45,7 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
   const token = localStorage.getItem('token')
   if (to.path === '/logout') {
     return next()

@@ -1,23 +1,29 @@
-const whiteList: string[] = ['/login'];
+interface PermissionRoute {
+  meta?: {
+    roles?: string[];
+  };
+  children?: PermissionRoute[];
+  [key: string]: unknown;
+}
 
-export function hasPermission(roles: string[], route: Record<string, unknown>): boolean {
+export function hasPermission(roles: string[], route: PermissionRoute): boolean {
   if (route.meta?.roles) {
-    return roles.some((role) => (route.meta?.roles as string[])?.includes(role));
+    return roles.some((role) => route.meta?.roles?.includes(role));
   }
   return true;
 }
 
 export function filterAsyncRoutes(
-  routes: Record<string, unknown>[],
+  routes: PermissionRoute[],
   roles: string[],
-): Record<string, unknown>[] {
-  const res: Record<string, unknown>[] = [];
+): PermissionRoute[] {
+  const res: PermissionRoute[] = [];
 
   routes.forEach((route) => {
     const tmp = { ...route };
     if (hasPermission(roles, tmp)) {
       if (tmp.children) {
-        tmp.children = filterAsyncRoutes(tmp.children as Record<string, unknown>[], roles);
+        tmp.children = filterAsyncRoutes(tmp.children, roles);
       }
       res.push(tmp);
     }

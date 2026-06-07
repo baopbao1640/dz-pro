@@ -1,13 +1,7 @@
 <script setup lang="ts">
 import { Card, Statistic, Row, Col, Typography } from 'ant-design-vue';
-import { useUserStore } from '@/store/user';
 
-const { Title, Paragraph } = Typography;
-
-const userStore = useUserStore();
-
-const currentUser = userStore.userInfo?.name || '未知用户';
-const currentUsername = userStore.userInfo?.preferred_username || 'unknown';
+const { Title } = Typography;
 </script>
 
 <template>
