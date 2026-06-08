@@ -1,0 +1,15 @@
+node_modules/
+dist/
+build/
+coverage/
+target/
+platform-core/**/target/
+platform-ui/dist/
+platform-ui/node_modules/
+*.tsbuildinfo
+
+# Keep legacy documents stable unless explicitly edited.
+one.md
+architecture-overview.md
+README.md
+HEALTH_CHECK_REPORT.md

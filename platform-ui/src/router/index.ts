@@ -1,9 +1,9 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import type { RouteRecordRaw } from 'vue-router'
-import MainLayout from '@/layouts/MainLayout.vue'
-import Login from '@/views/Login.vue'
-import OidcCallback from '@/views/OidcCallback.vue'
-import Logout from '@/views/Logout.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import type { RouteRecordRaw } from 'vue-router';
+import MainLayout from '@/layouts/MainLayout.vue';
+import Login from '@/views/Login.vue';
+import OidcCallback from '@/views/OidcCallback.vue';
+import Logout from '@/views/Logout.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -38,28 +38,28 @@ const routes: RouteRecordRaw[] = [
       },
     ],
   },
-]
+];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
-})
+});
 
 router.beforeEach((to, _from, next) => {
-  const token = localStorage.getItem('token')
+  const token = localStorage.getItem('token');
   if (to.path === '/logout') {
-    return next()
+    return next();
   }
   if (to.path === '/oauth2/callback') {
-    return next()
+    return next();
   }
   if (to.path === '/login') {
-    return next()
+    return next();
   }
   if (!token) {
-    return next('/login')
+    return next('/login');
   }
-  return next()
-})
+  return next();
+});
 
-export default router
+export default router;

@@ -1,8 +1,8 @@
-import { defineStore } from 'pinia'
+import { defineStore } from 'pinia';
 
 interface UserState {
-  token: string | null
-  userInfo: Record<string, any> | null
+  token: string | null;
+  userInfo: Record<string, unknown> | null;
 }
 
 export const useUserStore = defineStore('user', {
@@ -12,11 +12,11 @@ export const useUserStore = defineStore('user', {
   }),
   actions: {
     setToken(token: string) {
-      this.token = token
-      localStorage.setItem('token', token)
+      this.token = token;
+      localStorage.setItem('token', token);
     },
-    setUserInfo(user: Record<string, any>) {
-      this.userInfo = user
+    setUserInfo(user: Record<string, unknown>) {
+      this.userInfo = user;
     },
     async fetchUserInfo() {
       try {
@@ -24,23 +24,23 @@ export const useUserStore = defineStore('user', {
           method: 'GET',
           credentials: 'include',
           headers: { Accept: 'application/json' },
-        })
+        });
         if (!res.ok) {
-          this.clearUser()
-          return null
+          this.clearUser();
+          return null;
         }
-        const data = (await res.json()) as Record<string, any>
-        this.setUserInfo(data)
-        return data
+        const data = (await res.json()) as Record<string, unknown>;
+        this.setUserInfo(data);
+        return data;
       } catch {
-        this.clearUser()
-        return null
+        this.clearUser();
+        return null;
       }
     },
     clearUser() {
-      this.token = null
-      this.userInfo = null
-      localStorage.removeItem('token')
+      this.token = null;
+      this.userInfo = null;
+      localStorage.removeItem('token');
     },
   },
-})
+});

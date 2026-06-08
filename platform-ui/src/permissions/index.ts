@@ -13,10 +13,7 @@ export function hasPermission(roles: string[], route: PermissionRoute): boolean 
   return true;
 }
 
-export function filterAsyncRoutes(
-  routes: PermissionRoute[],
-  roles: string[],
-): PermissionRoute[] {
+export function filterAsyncRoutes(routes: PermissionRoute[], roles: string[]): PermissionRoute[] {
   const res: PermissionRoute[] = [];
 
   routes.forEach((route) => {

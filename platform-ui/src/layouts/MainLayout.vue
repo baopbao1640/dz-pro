@@ -2,11 +2,7 @@
 import { computed, h, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { Layout, Menu, Dropdown, Avatar, theme } from 'ant-design-vue';
-import {
-  DashboardOutlined,
-  UserOutlined,
-  LogoutOutlined,
-} from '@ant-design/icons-vue';
+import { DashboardOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons-vue';
 import { useUserStore } from '@/store/user';
 
 const router = useRouter();
