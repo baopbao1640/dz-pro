@@ -5,6 +5,12 @@ interface UserState {
   userInfo: Record<string, unknown> | null;
 }
 
+interface ApiResult<T> {
+  code: number;
+  message: string;
+  data: T;
+}
+
 export const useUserStore = defineStore('user', {
   state: (): UserState => ({
     token: null,
@@ -29,9 +35,9 @@ export const useUserStore = defineStore('user', {
           this.clearUser();
           return null;
         }
-        const data = (await res.json()) as Record<string, unknown>;
-        this.setUserInfo(data);
-        return data;
+        const result = (await res.json()) as ApiResult<Record<string, unknown>>;
+        this.setUserInfo(result.data);
+        return result.data;
       } catch {
         this.clearUser();
         return null;

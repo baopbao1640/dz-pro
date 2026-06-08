@@ -1,6 +1,7 @@
 interface PermissionRoute {
   meta?: {
     roles?: string[];
+    permission?: string;
   };
   children?: PermissionRoute[];
   [key: string]: unknown;
@@ -31,4 +32,27 @@ export function filterAsyncRoutes(routes: PermissionRoute[], roles: string[]): P
 
 export function checkWhiteList(whiteList: string[], path: string): boolean {
   return whiteList.includes(path);
+}
+
+export function getLocalPermissionCodes(): string[] {
+  const raw = localStorage.getItem('permissionCodes');
+  if (!raw) {
+    return [];
+  }
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    return Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === 'string') : [];
+  } catch {
+    return raw
+      .split(',')
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+}
+
+export function hasPermissionCode(permission: string, permissionCodes = getLocalPermissionCodes()): boolean {
+  if (permissionCodes.length === 0) {
+    return true;
+  }
+  return permissionCodes.includes(permission);
 }

@@ -1,72 +1,82 @@
-# System User Role Menu Org Progress
+# 当前阶段
 
-## Current Status
+Phase 2A Feature Spec 已冻结；Phase 3A 基础系统管理核心能力已进入集成验证后的待硬化状态。
 
-- Status: Phase 2A closing review passed, ready to commit
-- Last updated: 2026-06-08 13:02 +0800
-- Current task: Phase 2A Spec closing review
+# 当前目标
 
-## Completed
+为用户、角色、菜单、部门、岗位建立系统管理核心能力，并保持 Modular Monolith、Keycloak 认证边界、Flyway-only schema、MyBatis Plus、PostgreSQL、Ant Design Vue 和不引入 Spring Cloud 的约束。
 
-- Created feature progress document.
-- Read project Spec Kit process requirements.
-- Confirmed current scope is Phase 2A design only.
-- Confirmed Java, Vue, Mapper, Service, Controller, Entity, XML, OpenAPI implementation, and large-scale CRUD generation are forbidden in this phase.
-- Created `spec.md`.
-- Created `plan.md`.
-- Created `tasks.md`.
-- Defined implementation-free design for user, role, menu, department, and post management.
-- Defined API, DTO, VO, permission, audit, data permission, validation, page structure, and module boundary designs.
-- Completed Phase 2A closing review.
-- Filled documentation gaps for role, menu, department, and post management review coverage.
+# 当前完成情况
 
-## Verification
+- 已完成 `spec.md`、`plan.md`、`tasks.md`、`progress.md`。
+- 已完成 Phase 2A 冻结设计，覆盖用户、角色、菜单、部门、岗位。
+- 已定义 API、DTO、VO、权限点、页面结构、搜索条件、表格字段、表单校验、状态流转、审计日志、数据权限和前后端模块边界。
+- 已提交 Phase 2A 设计：`200b7aa docs(system): add user role menu org feature spec`。
+- 已创建 Phase 3A 分支：`codex/phase-3a-system-management`。
+- 已接入 `platform-common` 通用响应和分页结构。
+- 已建立 `platform-framework` 权限、数据权限、动态路由和异步审计基础骨架。
+- 已建立 `platform-system` 用户、部门、岗位、角色、菜单的基础后端结构。
+- 已建立系统管理前端导航和用户、部门、岗位、角色、菜单页面。
+- 已完成后端启动集成：PostgreSQL 连接、Flyway v2 校验、系统 API smoke。
 
-- `scripts/check-spec-progress.sh`: passed.
-- `git diff --check -- specs/002-system-user-role-menu-org`: passed.
-- Feature directory contains only `spec.md`, `plan.md`, `tasks.md`, and `progress.md`.
-- No Java, Vue, Mapper, Service, Controller, Entity, XML, or OpenAPI implementation files were created.
-- Closing review confirmed user, role, menu, department, and post management include API, DTO/VO, permission, page, search, table, validation, audit, and exception design.
-- Closing review confirmed role management covers `data_scope`, menu tree authorization, half-check logic, `menu_check_strictly`, and `dept_check_strictly`.
-- Closing review confirmed menu management covers `menu_type`, `permission_code`, `path`, `component`, `route_name`, `visible`, `is_cache`, `is_frame`, dynamic routes, and frontend/backend permission association.
-- Closing review confirmed department management covers `ancestors`, delete restrictions, child department restrictions, and user ownership restrictions.
-- Closing review confirmed Keycloak, Modular Monolith, Ant Design Vue, Flyway-only schema, and no Spring Cloud constraints.
+# 当前架构决策
 
-## Next Plan
+- 先完成用户、部门、岗位，再推进角色、菜单、权限和动态路由。原因是用户归属、部门树和岗位关系是角色与数据权限的基础依赖。
+- 认证仍由 Keycloak 负责，`sys_user` 只作为业务用户映射。原因是避免本地认证体系与 Keycloak 边界冲突。
+- 权限和数据权限先提供注解、上下文和条件构造骨架，不立即全局强制。原因是权限来源、菜单授权和用户映射仍需在后续阶段统一收敛。
+- 审计先实现异步发布与脱敏骨架，暂不直接持久化。原因是 framework 不应直接依赖 system 日志表，避免跨模块反向依赖。
+- 前端统一使用 Ant Design Vue 成熟组件。原因是系统管理页面应保持稳定、可扫描、可维护，不自定义替代通用组件。
+- 角色/菜单页面先做到基础可用，不做 UI 精修。原因是当前阶段目标是核心能力可运行，不是交互细节打磨。
 
-- Commit Phase 2A Spec if approved. Do not start implementation yet.
+# 已实现能力
 
-## Risks / Blockers
+- 用户：分页、详情、新增、编辑、启用/禁用、分配角色、分配岗位的基础后端接口与前端入口。
+- 部门：树查询、新增、编辑、状态控制、排序、删除限制的基础后端接口与前端页面。
+- 岗位：分页、详情、新增、编辑、状态控制、删除限制的基础后端接口与前端页面。
+- 角色：列表、详情、新增、编辑、状态控制、菜单分配、数据权限更新的基础后端接口；前端基础表格与表单。
+- 菜单：树查询、详情、新增、编辑、状态控制、删除限制、动态路由和权限码查询的基础后端接口；前端基础树表与表单。
+- 权限基础：`RequiresPermission`、`DataPermission`、`DataScope`、当前用户上下文、动态路由 DTO 骨架。
+- 审计基础：操作类型枚举、审计 annotation、事件模型、脱敏、异步发布器和 no-op fallback handler。
+- 前端状态：loading、empty、disabled、error、permission denied 基础状态。
 
-- This feature spans five management domains; later implementation should be split into small tasks and should not generate all CRUD code at once.
-- Keycloak user provisioning and local `sys_user` mapping flow still requires confirmation before implementation.
-- Button-level permission inventory may need expansion after UI prototype review.
+# Deferred（暂缓事项）
 
-## Activity Log
+- 动态路由真实权限联动：当前已有 API 和前端注入骨架，但尚未按当前 Keycloak 用户真实角色加载。
+- 数据权限 SQL 注入器：当前只有条件表达和注解基础，尚未全局拼接 SQL。
+- audit persistence：当前异步审计 handler 仍是 no-op fallback，尚未写入 `sys_oper_log` 或 `sys_login_log`。
+- permission cache：暂未实现权限缓存、失效和刷新策略。
+- 角色菜单半选持久化细节：已有接口基础，后续需要结合前端 tree half-check 行为补强。
+- 用户与 Keycloak 生命周期同步：当前只维护本地业务映射，暂未实现 Keycloak provisioning 或同步任务。
+- OpenAPI 注解覆盖：基础接口已存在，但注解完善应在接口稳定后处理。
+- UI 精修、国际化、多租户和性能极限优化均不属于当前阶段。
 
-### 2026-06-08 12:53 +0800 - Initialize Phase 2A progress
+# 风险与技术债
 
-- Current task: Initialize progress for `002-system-user-role-menu-org`.
-- Completed: Created `progress.md` and recorded Phase 2A restrictions.
-- Verification: Pending documentation checks.
-- Next plan: Create feature design documents.
-- Risks/blockers: Feature breadth must be controlled before implementation.
-- Links: N/A
+- 风险：`/actuator/health` 当前仍存在安全链暴露问题。影响范围是运维探活。处理方向是单独收敛 SecurityFilterChain matcher 和 actuator 安全策略。
+- 风险：系统 API smoke 在未登录情况下临时放行 `/api/system/**`。影响范围是权限安全。处理方向是接入真实当前用户、权限码校验和按钮级控制后取消临时放行。
+- 风险：审计未持久化。影响范围是操作追踪与合规。处理方向是在 system 模块实现日志表写入 handler，并保持异步非阻塞。
+- 风险：数据权限尚未真正作用于查询。影响范围是部门隔离和角色数据范围。处理方向是实现 AOP 或 MyBatis 拦截式 SQL 条件拼接。
+- 技术债：当前存在 `com.example.platform.admin` 与 `com.platform.core` 包名混用。当前接受原因是避免无关重构。后续应在单独技术债任务中收敛命名。
+- 技术债：部分 CRUD 仍是基础可运行版本，负向测试、边界校验和异常响应需要补强。
+- 技术债：前端 permission code 当前仍偏 scaffold，需要与后端当前用户权限接口对齐。
 
-### 2026-06-08 12:53 +0800 - Complete Phase 2A frozen design
+# 下一阶段计划
 
-- Current task: Create Feature Spec and interface design without implementation code.
-- Completed: Created `spec.md`, `plan.md`, and `tasks.md`; covered user, role, menu, department, and post management; defined APIs, DTOs, VOs, permission points, page structures, validation rules, status flows, audit points, data permission behavior, and frontend/backend module boundaries.
-- Verification: `scripts/check-spec-progress.sh` passed; `git diff --check -- specs/002-system-user-role-menu-org` passed; directory contains only four Markdown design files; no Java, Vue, Mapper, Service, Controller, Entity, XML, or OpenAPI implementation files were created.
-- Next plan: Stop and wait for user confirmation before implementation.
-- Risks/blockers: Keycloak provisioning boundary, detailed button permission seeds, department drag behavior, and first implementation slicing need confirmation before coding.
-- Links: N/A
+- 暂停继续业务开发，先完成 Documentation Governance Refactor。
+- 后续恢复 Phase 3A 前，先处理安全链、真实权限校验、数据权限落地和审计持久化。
+- 每个后续子阶段必须按模块拆分，做到一个模块、编译、测试、修复，再继续。
+- 继续推进前必须基于本文件确认 Deferred、风险和技术债，而不是读取旧流水日志。
 
-### 2026-06-08 13:02 +0800 - Phase 2A closing review
+# 验证结果
 
-- Current task: Review Phase 2A Spec completeness without implementation code.
-- Completed: Checked directory contents, implementation-file absence, five-domain design coverage, role authorization/data-scope details, menu route/permission fields, department hierarchy restrictions, and project constraints. Added missing documentation-only details for role validation/exceptions, menu search/table/exceptions and database field mapping, department search/table/validation/exceptions, and post search/table/exceptions.
-- Verification: `scripts/check-spec-progress.sh` passed; `git diff --check -- specs/002-system-user-role-menu-org` passed; directory contains only `spec.md`, `plan.md`, `tasks.md`, and `progress.md`; implementation-file scan returned no Java, Vue, Mapper, Service, Controller, Entity, XML, OpenAPI, YAML, or TypeScript files.
-- Next plan: Ready to commit Phase 2A Spec if approved. Do not start implementation.
-- Risks/blockers: Keycloak provisioning boundary, detailed button permission seeds, department drag behavior, and implementation slicing still need confirmation before coding.
-- Links: N/A
+- Phase 2A 文档检查已通过：目录只包含 `spec.md`、`plan.md`、`tasks.md`、`progress.md`，无 Java/Vue/XML/OpenAPI 实现。
+- 后端检查已通过：`cd platform-core && mvn spotless:check checkstyle:check test`。
+- 后端打包已通过：`cd platform-core && mvn package -DskipTests`。
+- 前端检查已通过：`cd platform-ui && pnpm lint`。
+- 前端构建已通过：`cd platform-ui && pnpm build`。
+- Spring Boot jar 已启动成功，PostgreSQL 与 Flyway v2 校验正常。
+- API smoke 已确认 `/api/system/depts/tree`、`/api/system/posts`、`/api/system/roles`、`/api/system/menus/tree` 返回 `code:200`。
+
+# Agent 协作备注
+
+多 Agent 协作只保留职责和边界结论，不再记录执行流水。后续 Agent 不得覆盖共享结构；如需修改通用 Result、Security Context、Permission annotation、DTO/VO 公共结构，必须先更新本文件中的当前架构决策、风险和下一阶段计划。

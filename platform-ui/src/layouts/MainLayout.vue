@@ -1,8 +1,20 @@
 <script setup lang="ts">
 import { computed, h, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { Layout, Menu, Dropdown, Avatar, theme } from 'ant-design-vue';
-import { DashboardOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons-vue';
+import { Avatar, Dropdown, Layout, Menu, theme } from 'ant-design-vue';
+import type { MenuProps } from 'ant-design-vue';
+import {
+  ApartmentOutlined,
+  DashboardOutlined,
+  IdcardOutlined,
+  LogoutOutlined,
+  MenuOutlined,
+  SafetyCertificateOutlined,
+  SettingOutlined,
+  TeamOutlined,
+  UserOutlined,
+} from '@ant-design/icons-vue';
+import { hasPermissionCode } from '@/permissions';
 import { useUserStore } from '@/store/user';
 
 const router = useRouter();
@@ -11,37 +23,83 @@ const userStore = useUserStore();
 const { token } = theme.useToken();
 const colorBgContainer = computed(() => token.value.colorBgContainer);
 
-const menuItems = [
+const systemChildren = computed<MenuProps['items']>(() =>
+  [
+    {
+      key: 'SystemUsers',
+      icon: () => h(TeamOutlined),
+      label: 'Users',
+      permission: 'system:user:list',
+    },
+    {
+      key: 'SystemDepts',
+      icon: () => h(ApartmentOutlined),
+      label: 'Departments',
+      permission: 'system:dept:list',
+    },
+    {
+      key: 'SystemPosts',
+      icon: () => h(IdcardOutlined),
+      label: 'Posts',
+      permission: 'system:post:list',
+    },
+    {
+      key: 'SystemRoles',
+      icon: () => h(SafetyCertificateOutlined),
+      label: 'Roles',
+      permission: 'system:role:list',
+    },
+    {
+      key: 'SystemMenus',
+      icon: () => h(MenuOutlined),
+      label: 'Menus',
+      permission: 'system:menu:list',
+    },
+  ].filter((item) => hasPermissionCode(item.permission)),
+);
+
+const menuItems = computed<MenuProps['items']>(() => [
   {
-    key: 'dashboard',
+    key: 'Dashboard',
     icon: () => h(DashboardOutlined),
-    label: '工作台',
+    label: 'Dashboard',
   },
-];
+  {
+    key: 'SystemManagement',
+    icon: () => h(SettingOutlined),
+    label: 'System',
+    children: systemChildren.value,
+  },
+]);
+
+const selectedKeys = computed(() => [String(router.currentRoute.value.name || 'Dashboard')]);
 
 const handleMenuClick = ({ key }: { key: PropertyKey }) => {
-  router.push({ name: String(key) });
+  if (key === 'SystemManagement') {
+    return;
+  }
+  void router.push({ name: String(key) });
 };
 
 const handleLogout = () => {
   userStore.clearUser();
-  router.replace({ name: 'Login' });
+  void router.replace({ name: 'Login' });
 };
 
 const userMenuItems = [
-  { key: 'profile', label: '个人中心' },
+  { key: 'profile', label: 'Profile' },
   {
     key: 'logout',
     icon: () => h(LogoutOutlined),
-    label: '退出登录',
+    label: 'Logout',
   },
 ];
 
 onMounted(() => {
   if (!userStore.token) {
-    const t = localStorage.getItem('token');
-    if (t) {
-      userStore.setToken(t);
+    const storedToken = localStorage.getItem('token');
+    if (storedToken) {
+      userStore.setToken(storedToken);
     }
   }
 });
@@ -56,14 +114,14 @@ const handleUserMenuClick = ({ key }: { key: PropertyKey }) => {
 <template>
   <Layout style="min-height: 100vh">
     <Layout.Header class="layout-header">
-      <div class="header-left">平台管理系统</div>
+      <div class="header-left">Platform Admin</div>
       <div class="header-right">
         <Dropdown :menu="{ items: userMenuItems, onClick: handleUserMenuClick }">
           <span class="user-action">
             <Avatar :size="28">
               <template #icon><UserOutlined /></template>
             </Avatar>
-            <span class="username">{{ userStore.userInfo?.name || '用户' }}</span>
+            <span class="username">{{ userStore.userInfo?.name || 'User' }}</span>
           </span>
         </Dropdown>
       </div>
@@ -75,7 +133,8 @@ const handleUserMenuClick = ({ key }: { key: PropertyKey }) => {
       >
         <Menu
           mode="inline"
-          :selected-keys="[router.currentRoute.value.name as string]"
+          :selected-keys="selectedKeys"
+          :default-open-keys="['SystemManagement']"
           :style="{ height: '100%', borderRight: 0 }"
           :items="menuItems"
           @select="handleMenuClick"

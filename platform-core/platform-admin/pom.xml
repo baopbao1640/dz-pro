@@ -23,7 +23,17 @@
         </dependency>
         <dependency>
             <groupId>com.platform.core</groupId>
+            <artifactId>platform-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.platform.core</groupId>
             <artifactId>platform-framework</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.platform.core</groupId>
+            <artifactId>platform-system</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

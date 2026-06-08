@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.core.system.post.mapper.SysPostMapper">
+    <resultMap id="PostListResultMap" type="com.platform.core.system.post.vo.PostListVO">
+        <id property="id" column="id"/>
+        <result property="postCode" column="post_code"/>
+        <result property="postName" column="post_name"/>
+        <result property="postSort" column="post_sort"/>
+        <result property="status" column="status"/>
+        <result property="boundUserCount" column="bound_user_count"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <select id="selectPostPage" resultMap="PostListResultMap">
+        SELECT p.id,
+               p.post_code,
+               p.post_name,
+               p.post_sort,
+               p.status,
+               p.create_time,
+               COALESCE(bindings.bound_user_count, 0) AS bound_user_count
+        FROM sys_post p
+        LEFT JOIN (
+            SELECT up.post_id, COUNT(DISTINCT u.id) AS bound_user_count
+            FROM sys_user_post up
+            INNER JOIN sys_user u ON u.id = up.user_id AND u.del_flag = '0'
+            GROUP BY up.post_id
+        ) bindings ON bindings.post_id = p.id
+        WHERE p.del_flag = '0'
+        <if test="query.postCode != null and query.postCode != ''">
+            AND p.post_code ILIKE CONCAT('%', #{query.postCode}, '%')
+        </if>
+        <if test="query.postName != null and query.postName != ''">
+            AND p.post_name ILIKE CONCAT('%', #{query.postName}, '%')
+        </if>
+        <if test="query.status != null and query.status != ''">
+            AND p.status = #{query.status}
+        </if>
+        ORDER BY p.post_sort ASC, p.id ASC
+    </select>
+
+    <select id="selectPostDetail" resultMap="PostListResultMap">
+        SELECT p.id,
+               p.post_code,
+               p.post_name,
+               p.post_sort,
+               p.status,
+               p.create_time,
+               COALESCE(bindings.bound_user_count, 0) AS bound_user_count
+        FROM sys_post p
+        LEFT JOIN (
+            SELECT up.post_id, COUNT(DISTINCT u.id) AS bound_user_count
+            FROM sys_user_post up
+            INNER JOIN sys_user u ON u.id = up.user_id AND u.del_flag = '0'
+            GROUP BY up.post_id
+        ) bindings ON bindings.post_id = p.id
+        WHERE p.id = #{id}
+          AND p.del_flag = '0'
+    </select>
+
+    <select id="selectActiveById" resultType="com.platform.core.system.post.domain.SysPost">
+        SELECT *
+        FROM sys_post
+        WHERE id = #{id}
+          AND del_flag = '0'
+    </select>
+
+    <select id="countActiveByPostCode" resultType="long">
+        SELECT COUNT(1)
+        FROM sys_post
+        WHERE post_code = #{postCode}
+          AND del_flag = '0'
+        <if test="excludeId != null">
+            AND id != #{excludeId}
+        </if>
+    </select>
+
+    <select id="countActiveUsersByPostId" resultType="long">
+        SELECT COUNT(DISTINCT u.id)
+        FROM sys_user_post up
+        INNER JOIN sys_user u ON u.id = up.user_id
+        WHERE up.post_id = #{id}
+          AND u.del_flag = '0'
+    </select>
+</mapper>
