@@ -28,6 +28,12 @@
 
 每次开始某个 feature 或 task 前，必须先读取对应 `progress.md`。若不存在，必须先创建初始进度文档。每完成一个 task 或 feature 后，必须更新 `progress.md`，记录已完成内容、验证结果、下一步计划和风险。
 
+## 8. Documentation Governance 原则
+
+所有 `specs/<number>-<feature>/` 必须遵守 `specs/000-documentation-governance/`。`progress.md` 必须使用统一中文结构，明确当前阶段、当前目标、当前完成情况、当前架构决策、已实现能力、Deferred（暂缓事项）、风险与技术债、下一阶段计划、验证结果和 Agent 协作备注。
+
+禁止把 `progress.md` 写成英文流水日志或低价值 Agent 执行记录。所有能力状态必须明确区分：已实现、scaffold、intentionally deferred、技术债和未来扩展点。
+
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
