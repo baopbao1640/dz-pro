@@ -1,3 +1,51 @@
+# DZ-Pro / Platform Core
+
+Open-source enterprise digital governance platform built with Spring Boot, Vue3 and Keycloak.
+
+## Overview
+
+DZ-Pro is a reusable enterprise platform foundation designed for digital governance, smart campus, enterprise management and AI-assisted platform systems.
+
+The project focuses on:
+
+* Modular Monolith Architecture
+* Organization & Permission Management
+* Workflow-ready Platform Design
+* OAuth2 / Keycloak Integration
+* Spec-driven Development Workflow
+* AI-assisted Engineering Practices
+
+## Tech Stack
+
+* Spring Boot 3
+* Vue 3
+* TypeScript
+* PostgreSQL
+* Redis
+* Keycloak
+* MyBatis Plus
+
+## Features
+
+* User Management
+* Role & Permission Management
+* Department Management
+* Dynamic Menu System
+* Modular Platform Architecture
+* Frontend/Backend Separation
+* Docker-based Infrastructure
+
+## Roadmap
+
+* [x] Core platform architecture
+* [x] System management module
+* [ ] Workflow engine integration
+* [ ] Multi-tenant support
+* [ ] AI orchestration support
+
+## Environment Requirements
+
+
 # Platform Core
 
 企业级平台底座项目。
