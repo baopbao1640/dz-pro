@@ -19,3 +19,16 @@
 ## 5. 编程规范执行原则
 
 新增和修改代码必须遵守 `docs/code-style.md`，并通过后端格式检查、Checkstyle、测试，以及前端 lint、格式检查、构建验证。
+
+## 6. Spec Kit 功能流程原则
+
+新增模块、新增表、新增接口、新增页面、新增权限点，以及用户管理、角色管理、权限管理、审计日志、业务系统扩展，必须走 Spec Kit 流程，并在 `specs/<number>-<feature>/` 下维护 `spec.md`、`plan.md`、`tasks.md`、`progress.md`。
+
+## 7. 进度钩子原则
+
+每次开始某个 feature 或 task 前，必须先读取对应 `progress.md`。若不存在，必须先创建初始进度文档。每完成一个 task 或 feature 后，必须更新 `progress.md`，记录已完成内容、验证结果、下一步计划和风险。
+
+<!-- SPECKIT START -->
+For additional context about technologies to be used, project structure,
+shell commands, and other important information, read the current plan
+<!-- SPECKIT END -->

@@ -39,6 +39,11 @@ Thumbs.db
 # Docker
 .docker/
 
+# Agent local state. Keep Spec Kit skills, ignore future local agent state.
+.agents/*
+!.agents/skills/
+!.agents/skills/**
+
 # Temporary files
 tmp-*
 *.tmp
