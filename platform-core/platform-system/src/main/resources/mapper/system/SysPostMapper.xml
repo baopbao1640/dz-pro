@@ -39,6 +39,21 @@
         ORDER BY p.post_sort ASC, p.id ASC
     </select>
 
+    <select id="countPostPage" resultType="long">
+        SELECT COUNT(1)
+        FROM sys_post p
+        WHERE p.del_flag = '0'
+        <if test="query.postCode != null and query.postCode != ''">
+            AND p.post_code ILIKE CONCAT('%', #{query.postCode}, '%')
+        </if>
+        <if test="query.postName != null and query.postName != ''">
+            AND p.post_name ILIKE CONCAT('%', #{query.postName}, '%')
+        </if>
+        <if test="query.status != null and query.status != ''">
+            AND p.status = #{query.status}
+        </if>
+    </select>
+
     <select id="selectPostDetail" resultMap="PostListResultMap">
         SELECT p.id,
                p.post_code,

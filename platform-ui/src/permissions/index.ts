@@ -8,6 +8,10 @@ interface PermissionRoute {
 }
 
 export function hasPermission(roles: string[], route: PermissionRoute): boolean {
+  const permissionCodes = getLocalPermissionCodes();
+  if (route.meta?.permission) {
+    return hasPermissionCode(route.meta.permission, permissionCodes);
+  }
   if (route.meta?.roles) {
     return roles.some((role) => route.meta?.roles?.includes(role));
   }
@@ -51,7 +55,10 @@ export function getLocalPermissionCodes(): string[] {
 }
 
 export function hasPermissionCode(permission: string, permissionCodes = getLocalPermissionCodes()): boolean {
-  if (permissionCodes.length === 0) {
+  if (!permission) {
+    return true;
+  }
+  if (permissionCodes.includes('*:*:*')) {
     return true;
   }
   return permissionCodes.includes(permission);

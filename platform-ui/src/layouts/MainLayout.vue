@@ -73,6 +73,19 @@ const menuItems = computed<MenuProps['items']>(() => [
 ]);
 
 const selectedKeys = computed(() => [String(router.currentRoute.value.name || 'Dashboard')]);
+const username = computed(() => {
+  const userInfo = userStore.userInfo;
+  if (!userInfo) {
+    return 'User';
+  }
+  if ('userName' in userInfo && typeof userInfo.userName === 'string') {
+    return userInfo.userName;
+  }
+  if ('name' in userInfo && typeof userInfo.name === 'string') {
+    return userInfo.name;
+  }
+  return 'User';
+});
 
 const handleMenuClick = ({ key }: { key: PropertyKey }) => {
   if (key === 'SystemManagement') {
@@ -121,7 +134,7 @@ const handleUserMenuClick = ({ key }: { key: PropertyKey }) => {
             <Avatar :size="28">
               <template #icon><UserOutlined /></template>
             </Avatar>
-            <span class="username">{{ userStore.userInfo?.name || 'User' }}</span>
+            <span class="username">{{ username }}</span>
           </span>
         </Dropdown>
       </div>

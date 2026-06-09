@@ -18,4 +18,6 @@ public interface SysRoleMapper extends BaseMapper<SysRole> {
   Long countActiveByRoleKey(@Param("roleKey") String roleKey, @Param("excludeId") Long excludeId);
 
   Long countAssignedUsers(@Param("roleId") Long roleId);
+
+  List<SysRole> selectEnabledRolesByUserId(@Param("userId") Long userId);
 }

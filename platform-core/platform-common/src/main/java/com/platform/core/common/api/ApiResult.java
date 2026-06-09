@@ -19,4 +19,8 @@ public record ApiResult<T>(int code, String message, T data) {
   public static <T> ApiResult<T> error(String message) {
     return new ApiResult<>(ERROR_CODE, Objects.requireNonNullElse(message, "error"), null);
   }
+
+  public static <T> ApiResult<T> of(int code, String message, T data) {
+    return new ApiResult<>(code, Objects.requireNonNullElse(message, "error"), data);
+  }
 }

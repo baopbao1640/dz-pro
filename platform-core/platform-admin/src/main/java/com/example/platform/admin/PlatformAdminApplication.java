@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @MapperScan({
+  "com.platform.core.system.audit.mapper",
   "com.platform.core.system.dept.mapper",
   "com.platform.core.system.menu.mapper",
   "com.platform.core.system.post.mapper",

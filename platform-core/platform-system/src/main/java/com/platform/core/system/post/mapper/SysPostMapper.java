@@ -13,6 +13,8 @@ public interface SysPostMapper extends BaseMapper<SysPost> {
 
   Page<PostListVO> selectPostPage(Page<PostListVO> page, @Param("query") PostPageQueryDTO query);
 
+  long countPostPage(@Param("query") PostPageQueryDTO query);
+
   PostListVO selectPostDetail(@Param("id") Long id);
 
   SysPost selectActiveById(@Param("id") Long id);

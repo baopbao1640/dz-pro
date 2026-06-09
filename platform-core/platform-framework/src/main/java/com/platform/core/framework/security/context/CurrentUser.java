@@ -12,13 +12,16 @@ public record CurrentUser(
     String keycloakUserId,
     String userName,
     Long deptId,
+    Set<Long> roleIds,
     Set<String> roleKeys,
     Set<String> permissionCodes,
+    String dataScope,
     boolean superAdmin) {
 
   public CurrentUser {
     keycloakUserId = Objects.requireNonNull(keycloakUserId, "keycloakUserId");
     userName = Objects.requireNonNull(userName, "userName");
+    roleIds = roleIds == null ? Set.of() : Set.copyOf(roleIds);
     roleKeys = roleKeys == null ? Set.of() : Set.copyOf(roleKeys);
     permissionCodes = permissionCodes == null ? Set.of() : Set.copyOf(permissionCodes);
   }

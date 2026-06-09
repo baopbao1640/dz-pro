@@ -27,7 +27,8 @@ public class SysPostServiceImpl implements SysPostService {
   public PageResult<PostListVO> page(PostPageQueryDTO query) {
     Page<PostListVO> page =
         postMapper.selectPostPage(new Page<>(query.getPageNum(), query.getPageSize()), query);
-    return PageResult.of(page.getRecords(), page.getTotal(), page.getCurrent(), page.getSize());
+    return PageResult.of(
+        page.getRecords(), postMapper.countPostPage(query), page.getCurrent(), page.getSize());
   }
 
   @Override

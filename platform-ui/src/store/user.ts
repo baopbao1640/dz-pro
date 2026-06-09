@@ -1,20 +1,19 @@
 import { defineStore } from 'pinia';
+import { getAuthPermissions, getAuthProfile, getAuthRoutes, type AuthProfile, type DynamicRoute } from '@/api/system/auth';
 
 interface UserState {
   token: string | null;
-  userInfo: Record<string, unknown> | null;
-}
-
-interface ApiResult<T> {
-  code: number;
-  message: string;
-  data: T;
+  userInfo: AuthProfile | Record<string, unknown> | null;
+  permissionCodes: string[];
+  dynamicRoutes: DynamicRoute[];
 }
 
 export const useUserStore = defineStore('user', {
   state: (): UserState => ({
     token: null,
     userInfo: null,
+    permissionCodes: [],
+    dynamicRoutes: [],
   }),
   actions: {
     setToken(token: string) {
@@ -24,20 +23,24 @@ export const useUserStore = defineStore('user', {
     setUserInfo(user: Record<string, unknown>) {
       this.userInfo = user;
     },
+    setPermissions(permissionCodes: string[]) {
+      this.permissionCodes = permissionCodes;
+      localStorage.setItem('permissionCodes', JSON.stringify(permissionCodes));
+    },
+    setDynamicRoutes(routes: DynamicRoute[]) {
+      this.dynamicRoutes = routes;
+    },
     async fetchUserInfo() {
       try {
-        const res = await fetch('/api/user/info', {
-          method: 'GET',
-          credentials: 'include',
-          headers: { Accept: 'application/json' },
-        });
-        if (!res.ok) {
-          this.clearUser();
-          return null;
-        }
-        const result = (await res.json()) as ApiResult<Record<string, unknown>>;
-        this.setUserInfo(result.data);
-        return result.data;
+        const [profile, permissions, routes] = await Promise.all([
+          getAuthProfile(),
+          getAuthPermissions(),
+          getAuthRoutes(),
+        ]);
+        this.userInfo = profile;
+        this.setPermissions(permissions);
+        this.setDynamicRoutes(routes);
+        return profile;
       } catch {
         this.clearUser();
         return null;
@@ -46,7 +49,10 @@ export const useUserStore = defineStore('user', {
     clearUser() {
       this.token = null;
       this.userInfo = null;
+      this.permissionCodes = [];
+      this.dynamicRoutes = [];
       localStorage.removeItem('token');
+      localStorage.removeItem('permissionCodes');
     },
   },
 });

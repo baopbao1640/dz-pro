@@ -82,6 +82,41 @@
         ORDER BY u.create_time DESC, u.id DESC
     </select>
 
+    <select id="countUserPage" resultType="long">
+        SELECT COUNT(DISTINCT u.id)
+        FROM sys_user u
+        <include refid="UserDisplayJoins"/>
+        WHERE u.del_flag = '0'
+        <if test="query.deptId != null and query.includeChildren == true">
+            AND (u.dept_id = #{query.deptId}
+                 OR d.ancestors = CAST(#{query.deptId} AS VARCHAR)
+                 OR d.ancestors LIKE CONCAT(CAST(#{query.deptId} AS VARCHAR), ',%')
+                 OR d.ancestors LIKE CONCAT('%,', CAST(#{query.deptId} AS VARCHAR), ',%')
+                 OR d.ancestors LIKE CONCAT('%,', CAST(#{query.deptId} AS VARCHAR)))
+        </if>
+        <if test="query.deptId != null and query.includeChildren != true">
+            AND u.dept_id = #{query.deptId}
+        </if>
+        <if test="query.userName != null and query.userName != ''">
+            AND u.user_name ILIKE CONCAT('%', #{query.userName}, '%')
+        </if>
+        <if test="query.nickName != null and query.nickName != ''">
+            AND u.nick_name ILIKE CONCAT('%', #{query.nickName}, '%')
+        </if>
+        <if test="query.phoneNumber != null and query.phoneNumber != ''">
+            AND u.phone_number ILIKE CONCAT('%', #{query.phoneNumber}, '%')
+        </if>
+        <if test="query.status != null and query.status != ''">
+            AND u.status = #{query.status}
+        </if>
+        <if test="query.createdStartTime != null">
+            AND u.create_time &gt;= #{query.createdStartTime}
+        </if>
+        <if test="query.createdEndTime != null">
+            AND u.create_time &lt;= #{query.createdEndTime}
+        </if>
+    </select>
+
     <select id="selectUserDetail" resultMap="UserDetailResultMap">
         SELECT <include refid="UserDisplayColumns"/>
         FROM sys_user u
@@ -89,6 +124,13 @@
         WHERE u.id = #{id}
           AND u.del_flag = '0'
         GROUP BY u.id, d.dept_name
+    </select>
+
+    <select id="selectActiveByKeycloakUserId" resultType="com.platform.core.system.user.domain.SysUser">
+        SELECT *
+        FROM sys_user
+        WHERE keycloak_user_id = #{keycloakUserId}
+          AND del_flag = '0'
     </select>
 
     <select id="selectRoleIdsByUserId" resultType="long">

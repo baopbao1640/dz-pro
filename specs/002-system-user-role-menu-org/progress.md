@@ -1,6 +1,6 @@
 # 当前阶段
 
-Phase 2A Feature Spec 已冻结；Phase 3A 基础系统管理核心能力已进入集成验证后的待硬化状态。
+Phase 2A Feature Spec 已冻结；Phase 3A 整体测试与回归验证已完成，基础系统管理核心能力可启动、可迁移、可构建，但仍有安全链、统一异常、分页 total、数据权限和审计落库风险需要进入 Phase 3B 优先处理。
 
 # 当前目标
 
@@ -18,6 +18,7 @@ Phase 2A Feature Spec 已冻结；Phase 3A 基础系统管理核心能力已进�
 - 已建立 `platform-system` 用户、部门、岗位、角色、菜单的基础后端结构。
 - 已建立系统管理前端导航和用户、部门、岗位、角色、菜单页面。
 - 已完成后端启动集成：PostgreSQL 连接、Flyway v2 校验、系统 API smoke。
+- 已完成 Phase 3A 整体测试与回归验证报告：`docs/test-reports/phase-3a-full-regression-report.md`。
 
 # 当前架构决策
 
@@ -54,6 +55,8 @@ Phase 2A Feature Spec 已冻结；Phase 3A 基础系统管理核心能力已进�
 
 - 风险：`/actuator/health` 当前仍存在安全链暴露问题。影响范围是运维探活。处理方向是单独收敛 SecurityFilterChain matcher 和 actuator 安全策略。
 - 风险：系统 API smoke 在未登录情况下临时放行 `/api/system/**`。影响范围是权限安全。处理方向是接入真实当前用户、权限码校验和按钮级控制后取消临时放行。
+- 风险：参数校验异常当前最终表现为 HTTP 401 且响应体为空。影响范围是前端错误提示和 API 契约稳定性。处理方向是 Phase 3B 增加统一异常处理，并避免 `/error` 或错误响应路径被安全链误拦截。
+- 风险：用户、岗位分页接口返回 records 有数据但 `total=0`。影响范围是前端分页器和列表体验。处理方向是 Phase 3B 修正 MyBatis Plus 分页统计或自定义分页总数查询。
 - 风险：审计未持久化。影响范围是操作追踪与合规。处理方向是在 system 模块实现日志表写入 handler，并保持异步非阻塞。
 - 风险：数据权限尚未真正作用于查询。影响范围是部门隔离和角色数据范围。处理方向是实现 AOP 或 MyBatis 拦截式 SQL 条件拼接。
 - 技术债：当前存在 `com.example.platform.admin` 与 `com.platform.core` 包名混用。当前接受原因是避免无关重构。后续应在单独技术债任务中收敛命名。
@@ -62,8 +65,8 @@ Phase 2A Feature Spec 已冻结；Phase 3A 基础系统管理核心能力已进�
 
 # 下一阶段计划
 
-- 暂停继续业务开发，先完成 Documentation Governance Refactor。
-- 后续恢复 Phase 3A 前，先处理安全链、真实权限校验、数据权限落地和审计持久化。
+- Phase 3A 回归完成后可以进入 Phase 3B，但 Phase 3B 首批任务必须优先处理安全链、统一异常响应、分页 total、真实权限校验、数据权限落地和审计持久化。
+- 不建议在处理上述 P0/P1 风险前继续扩大业务 CRUD 范围。
 - 每个后续子阶段必须按模块拆分，做到一个模块、编译、测试、修复，再继续。
 - 继续推进前必须基于本文件确认 Deferred、风险和技术债，而不是读取旧流水日志。
 
@@ -76,6 +79,15 @@ Phase 2A Feature Spec 已冻结；Phase 3A 基础系统管理核心能力已进�
 - 前端构建已通过：`cd platform-ui && pnpm build`。
 - Spring Boot jar 已启动成功，PostgreSQL 与 Flyway v2 校验正常。
 - API smoke 已确认 `/api/system/depts/tree`、`/api/system/posts`、`/api/system/roles`、`/api/system/menus/tree` 返回 `code:200`。
+- Phase 3A 整体回归验证已通过后端完整命令序列：`mvn clean`、`mvn spotless:check`、`mvn checkstyle:check`、`mvn test`、`mvn package -DskipTests`。
+- 干净 PostgreSQL 测试库 `platform_core_phase3a_regression` 已确认 Flyway V1 + V2 执行成功，schema version 达到 `v2`。
+- 数据库断言已确认：17 张 `sys_*` 表、9 个 partial unique index、5 个基础字典类型、默认管理员映射 `admin-keycloak-sub`、`sys.log.retention.days = 180`。
+- API smoke 已补充确认 `/api/system/users`、`/api/system/menus/tree` 返回 HTTP 200 与统一 `code/message/data` 结构。
+- 安全链当前行为已记录：未登录访问 `/api/system/**` 当前临时放行；未登录访问 `/actuator/health` 返回 401；未登录访问 `/api/user/info` 返回 401。
+- 已发现并记录分页 `total=0` 与错误响应 401 空响应问题，未在本阶段修复。
+- 前端 `pnpm lint` 与 `pnpm build` 已通过，构建产生的 `platform-ui/dist/` 不应提交。
+- 文档与格式检查已通过：`scripts/check-spec-progress.sh`、`git diff --check`。`git diff --check` 仅输出 LF/CRLF 提示，无 whitespace error。
+- P0 注释治理抽查已通过：`SecurityConfig`、audit、authz、datascope、dynamic-route 存在中文 Boundary / Deferred / Risk 注释，未发现孤立 `TODO`。
 
 # Agent 协作备注
 

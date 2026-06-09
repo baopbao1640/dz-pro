@@ -4,6 +4,8 @@ import MainLayout from '@/layouts/MainLayout.vue';
 import Login from '@/views/Login.vue';
 import OidcCallback from '@/views/OidcCallback.vue';
 import Logout from '@/views/Logout.vue';
+import { hasPermissionCode } from '@/permissions';
+import { useUserStore } from '@/store/user';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -75,7 +77,7 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, _from, next) => {
+router.beforeEach(async (to, _from, next) => {
   const token = localStorage.getItem('token');
   if (to.path === '/logout') {
     return next();
@@ -88,6 +90,17 @@ router.beforeEach((to, _from, next) => {
   }
   if (!token) {
     return next('/login');
+  }
+  const userStore = useUserStore();
+  if (userStore.permissionCodes.length === 0) {
+    const profile = await userStore.fetchUserInfo();
+    if (!profile) {
+      return next('/login');
+    }
+  }
+  const permission = to.meta.permission;
+  if (typeof permission === 'string' && !hasPermissionCode(permission, userStore.permissionCodes)) {
+    return next('/dashboard');
   }
   return next();
 });

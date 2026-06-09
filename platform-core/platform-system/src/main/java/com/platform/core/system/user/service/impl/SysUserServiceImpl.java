@@ -36,7 +36,8 @@ public class SysUserServiceImpl implements SysUserService {
   public PageResult<UserListVO> page(UserPageQueryDTO query) {
     Page<UserListVO> page =
         userMapper.selectUserPage(new Page<>(query.getPageNum(), query.getPageSize()), query);
-    return PageResult.of(page.getRecords(), page.getTotal(), page.getCurrent(), page.getSize());
+    return PageResult.of(
+        page.getRecords(), userMapper.countUserPage(query), page.getCurrent(), page.getSize());
   }
 
   @Override

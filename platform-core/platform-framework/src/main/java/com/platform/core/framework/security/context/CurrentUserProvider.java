@@ -1,6 +1,7 @@
 package com.platform.core.framework.security.context;
 
 import java.util.Optional;
+import org.springframework.security.access.AccessDeniedException;
 
 /**
  * 当前用户提供者是认证结果与业务授权之间的边界。Deferred: 当前仍是接口契约，后续需要从 Spring Security principal 解析 Keycloak
@@ -12,6 +13,6 @@ public interface CurrentUserProvider {
 
   default CurrentUser requireCurrentUser() {
     return getCurrentUser()
-        .orElseThrow(() -> new IllegalStateException("Current user is not available"));
+        .orElseThrow(() -> new AccessDeniedException("Current user is not available"));
   }
 }

@@ -1,5 +1,7 @@
 package com.platform.core.framework.config;
 
+import com.platform.core.framework.security.web.RestAccessDeniedHandler;
+import com.platform.core.framework.security.web.RestAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -23,17 +25,26 @@ public class SecurityConfig {
    */
   @Bean
   @Order(0)
-  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+  public SecurityFilterChain securityFilterChain(
+      HttpSecurity http,
+      RestAuthenticationEntryPoint authenticationEntryPoint,
+      RestAccessDeniedHandler accessDeniedHandler)
+      throws Exception {
     http.csrf(csrf -> csrf.disable())
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .exceptionHandling(
+            exception ->
+                exception
+                    .authenticationEntryPoint(authenticationEntryPoint)
+                    .accessDeniedHandler(accessDeniedHandler))
         .authorizeHttpRequests(
             auth ->
                 auth.requestMatchers("/actuator/health")
                     .permitAll()
-                    .requestMatchers("/api/system/**")
-                    .permitAll()
-                    .requestMatchers("/api/user/info")
+                    .requestMatchers("/actuator/**")
+                    .authenticated()
+                    .requestMatchers("/api/system/**", "/api/user/info")
                     .authenticated()
                     .anyRequest()
                     .authenticated())

@@ -41,7 +41,16 @@ class AuthorizationFoundationTest {
     Set<String> permissions = new java.util.HashSet<>(Set.of("system:user:list"));
 
     CurrentUser currentUser =
-        new CurrentUser(1L, "keycloak-sub", "admin", 10L, Set.of("admin"), permissions, false);
+        new CurrentUser(
+            1L,
+            "keycloak-sub",
+            "admin",
+            10L,
+            Set.of(100L),
+            Set.of("admin"),
+            permissions,
+            "1",
+            false);
     permissions.add("system:role:list");
 
     assertThat(currentUser.permissionCodes()).containsExactly("system:user:list");

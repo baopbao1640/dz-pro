@@ -16,7 +16,11 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
 
   Page<UserListVO> selectUserPage(Page<UserListVO> page, @Param("query") UserPageQueryDTO query);
 
+  long countUserPage(@Param("query") UserPageQueryDTO query);
+
   UserDetailVO selectUserDetail(@Param("id") Long id);
+
+  SysUser selectActiveByKeycloakUserId(@Param("keycloakUserId") String keycloakUserId);
 
   List<Long> selectRoleIdsByUserId(@Param("id") Long id);
 

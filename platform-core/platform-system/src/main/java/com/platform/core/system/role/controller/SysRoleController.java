@@ -1,6 +1,9 @@
 package com.platform.core.system.role.controller;
 
 import com.platform.core.common.api.ApiResult;
+import com.platform.core.framework.audit.AuditAction;
+import com.platform.core.framework.audit.AuditLog;
+import com.platform.core.framework.security.annotation.RequiresPermission;
 import com.platform.core.system.role.dto.RoleDataScopeDTO;
 import com.platform.core.system.role.dto.RoleMenuAssignDTO;
 import com.platform.core.system.role.dto.RolePageQueryDTO;
@@ -31,27 +34,35 @@ public class SysRoleController {
   }
 
   @GetMapping
+  @RequiresPermission("system:role:list")
   public ApiResult<List<RoleListVO>> list(@Valid RolePageQueryDTO query) {
     return ApiResult.success(roleService.list(query));
   }
 
   @GetMapping("/{id}")
+  @RequiresPermission("system:role:query")
   public ApiResult<RoleDetailVO> detail(@PathVariable Long id) {
     return ApiResult.success(roleService.detail(id));
   }
 
   @PostMapping
+  @RequiresPermission("system:role:add")
+  @AuditLog(moduleTitle = "角色管理", action = AuditAction.CREATE)
   public ApiResult<RoleDetailVO> create(@Valid @RequestBody RoleSaveDTO dto) {
     return ApiResult.success(roleService.create(dto));
   }
 
   @PutMapping("/{id}")
+  @RequiresPermission("system:role:edit")
+  @AuditLog(moduleTitle = "角色管理", action = AuditAction.UPDATE)
   public ApiResult<RoleDetailVO> update(
       @PathVariable Long id, @Valid @RequestBody RoleSaveDTO dto) {
     return ApiResult.success(roleService.update(id, dto));
   }
 
   @PatchMapping("/{id}/status")
+  @RequiresPermission("system:role:status")
+  @AuditLog(moduleTitle = "角色管理", action = AuditAction.UPDATE)
   public ApiResult<Void> updateStatus(
       @PathVariable Long id, @Valid @RequestBody RoleStatusDTO dto) {
     roleService.updateStatus(id, dto);
@@ -59,6 +70,8 @@ public class SysRoleController {
   }
 
   @PutMapping("/{id}/menus")
+  @RequiresPermission("system:role:assign-menu")
+  @AuditLog(moduleTitle = "角色管理", action = AuditAction.ASSIGN)
   public ApiResult<Void> assignMenus(
       @PathVariable Long id, @Valid @RequestBody RoleMenuAssignDTO dto) {
     roleService.assignMenus(id, dto);
@@ -66,6 +79,8 @@ public class SysRoleController {
   }
 
   @PutMapping("/{id}/data-scope")
+  @RequiresPermission("system:role:data-scope")
+  @AuditLog(moduleTitle = "角色管理", action = AuditAction.UPDATE)
   public ApiResult<Void> updateDataScope(
       @PathVariable Long id, @Valid @RequestBody RoleDataScopeDTO dto) {
     roleService.updateDataScope(id, dto);
