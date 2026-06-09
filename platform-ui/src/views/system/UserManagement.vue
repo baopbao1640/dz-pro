@@ -8,6 +8,11 @@ import { changeUserStatus, createUser, getUser, listUsers, updateUser } from '@/
 import type { UserDetailVO, UserListVO, UserSaveDTO } from '@/api/system/user';
 import { hasPermissionCode } from '@/permissions';
 
+/*
+ * Boundary:
+ * 用户管理页采用 Ant Design Vue 后台列表 + 弹窗表单结构，只负责前端展示、表单状态和按钮权限体验。
+ * 后端 `system:user:*` permission code 仍是最终授权边界。
+ */
 interface UserSearchForm {
   userName?: string;
   nickName?: string;

@@ -11,6 +11,15 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+/**
+ * 用户管理 Mapper，封装 `sys_user` 及用户角色、岗位关系的查询和写入。
+ *
+ * <p>职责：提供分页、详情、Keycloak subject 映射和关系表维护 SQL。
+ *
+ * <p>边界：不执行业务校验，不判断权限，不处理 token。
+ *
+ * <p>当前阶段能力：为用户分页 total、当前用户映射和授权关系维护提供持久化入口。
+ */
 @Mapper
 public interface SysUserMapper extends BaseMapper<SysUser> {
 

@@ -26,7 +26,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-/** Minimal role service implementation for Phase 3A backend scaffolding. */
+/**
+ * 角色管理服务实现，负责角色唯一性、状态、菜单授权和数据范围关系维护。
+ *
+ * <p>职责：在事务内维护角色主表、角色菜单关系和角色部门范围关系。
+ *
+ * <p>边界：不执行当前用户授权判断，不把 data scope 直接应用到业务查询。
+ *
+ * <p>当前阶段能力：为 permission code enforce 和 data scope 基础契约提供授权数据来源。
+ */
 @Service
 public class SysRoleServiceImpl implements SysRoleService {
 

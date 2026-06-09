@@ -22,6 +22,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 菜单管理 Controller，承载菜单树、详情、维护、状态、删除以及路由/权限查询入口。
+ *
+ * <p>职责：声明菜单管理 permission code 和审计动作，并委托服务层维护菜单模型。
+ *
+ * <p>边界：不在 Controller 中组装动态路由，不直接解释角色授权关系。
+ *
+ * <p>当前阶段能力：支持菜单基础维护，并为动态路由和按钮权限提供数据来源。
+ */
 @RestController
 @RequestMapping("/api/system/menus")
 public class SysMenuController {

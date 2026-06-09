@@ -8,7 +8,15 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-/** Persistence contract for sys_menu. */
+/**
+ * 菜单 Mapper，封装 `sys_menu` 查询、权限码查询和角色授权菜单查询。
+ *
+ * <p>职责：提供菜单树数据、权限码唯一性、子节点占用和角色菜单集合。
+ *
+ * <p>边界：不组装前端路由，不决定按钮权限如何展示。
+ *
+ * <p>当前阶段能力：支撑菜单管理、动态路由和 permission code 查询。
+ */
 @Mapper
 public interface SysMenuMapper extends BaseMapper<SysMenu> {
 

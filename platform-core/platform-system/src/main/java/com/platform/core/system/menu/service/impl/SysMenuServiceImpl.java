@@ -22,7 +22,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-/** Minimal menu service implementation for Phase 3A backend scaffolding. */
+/**
+ * 菜单服务实现，负责菜单树维护、权限码唯一性和动态路由数据组装。
+ *
+ * <p>职责：维护目录、菜单、按钮资源，并根据角色集合输出前端路由和权限码。
+ *
+ * <p>边界：不加载前端组件文件，不执行接口授权判断。
+ *
+ * <p>当前阶段能力：支撑 Phase 3B 动态 route inject 和 permission code enforce。
+ */
 @Service
 public class SysMenuServiceImpl implements SysMenuService {
 

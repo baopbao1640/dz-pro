@@ -23,6 +23,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 用户管理 Controller，承载后台用户列表、详情、创建、修改、状态和授权关系维护入口。
+ *
+ * <p>职责：校验 Web 入参、声明 permission code 和审计动作，并委托 `SysUserService` 执行业务规则。
+ *
+ * <p>边界：不直接访问 Mapper，不处理 Keycloak 用户生命周期，只维护本地业务用户映射。
+ *
+ * <p>当前阶段能力：支持用户与角色、岗位关系维护；真实认证仍依赖 Keycloak subject 映射。
+ */
 @RestController
 @RequestMapping("/api/system/users")
 public class SysUserController {

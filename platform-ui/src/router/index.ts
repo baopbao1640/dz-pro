@@ -77,6 +77,18 @@ const router = createRouter({
   routes,
 });
 
+/*
+ * Boundary:
+ * 当前路由表保留后台管理基础页面入口；真正的按钮权限和系统接口授权仍以后端 permission code enforce 为准。
+ */
+/*
+ * Deferred:
+ * 后端 `/api/system/auth/routes` 已返回动态路由契约，但当前前端仍以本地静态路由为主，后续需要接入组件白名单后再启用全量动态注入。
+ */
+/*
+ * Risk:
+ * 前端路由守卫只能控制用户体验，不能作为安全边界；任何受保护接口都必须继续由后端返回 401/403。
+ */
 router.beforeEach(async (to, _from, next) => {
   const token = localStorage.getItem('token');
   if (to.path === '/logout') {

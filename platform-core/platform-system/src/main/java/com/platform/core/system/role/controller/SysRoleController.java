@@ -23,6 +23,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 角色管理 Controller，承载角色列表、详情、维护、状态、菜单授权和数据范围配置入口。
+ *
+ * <p>职责：声明角色管理 permission code 和审计动作，并委托服务层维护角色授权关系。
+ *
+ * <p>边界：不直接写角色菜单或角色部门关系，不在 Controller 中解释 data scope 语义。
+ *
+ * <p>当前阶段能力：支持角色、菜单授权和 data scope 基础配置。
+ */
 @RestController
 @RequestMapping("/api/system/roles")
 public class SysRoleController {

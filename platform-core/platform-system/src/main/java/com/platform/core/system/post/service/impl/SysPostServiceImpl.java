@@ -14,6 +14,15 @@ import java.time.OffsetDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * 岗位管理服务实现，负责岗位唯一性、状态和占用关系校验。
+ *
+ * <p>职责：维护岗位基础数据，并在删除前确认未被用户占用。
+ *
+ * <p>边界：不处理用户岗位分配事务，避免与用户服务职责重叠。
+ *
+ * <p>当前阶段能力：支持岗位分页 total 修复和审计入口调用。
+ */
 @Service
 public class SysPostServiceImpl implements SysPostService {
 

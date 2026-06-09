@@ -6,6 +6,10 @@ import { changePostStatus, createPost, getPost, listPosts, updatePost } from '@/
 import type { PostListVO, PostSaveDTO } from '@/api/system/post';
 import { hasPermissionCode } from '@/permissions';
 
+/*
+ * Boundary:
+ * 岗位管理页负责后台分页、表单弹窗和状态控制体验；用户岗位关系和删除占用约束由后端服务层保证。
+ */
 interface PostSearchForm {
   postCode?: string;
   postName?: string;

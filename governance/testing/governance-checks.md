@@ -8,6 +8,7 @@
 
 ```bash
 git status --short
+scripts/check-comments.sh
 git diff --check
 scripts/check-spec-progress.sh
 ```
@@ -47,11 +48,22 @@ pnpm build
 修改 `specs/`、`docs/` 或 `governance/` 时，必须执行：
 
 ```bash
+scripts/check-comments.sh
 git diff --check
 scripts/check-spec-progress.sh
 ```
 
 如果只修改 `governance/` 且未修改业务代码，可不执行 Java/Vue 构建，但必须在结论中明确“不适用”。
+
+## 注释治理检查
+
+每次开发后必须执行：
+
+```bash
+scripts/check-comments.sh
+```
+
+该脚本用于强制检查核心 Java 类头 Javadoc、public 入口方法 Javadoc、framework 关键类 Boundary / Deferred / Risk、孤立 `TODO` 和明显低价值中文注释。脚本是启发式门禁，不能替代人工 Governance Review；如果脚本通过但注释仍无法说明职责、边界和风险，Review 必须要求补充。
 
 ## 验证结果记录
 

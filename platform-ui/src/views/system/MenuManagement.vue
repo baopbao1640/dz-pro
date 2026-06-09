@@ -13,6 +13,11 @@ import {
 } from '@/api/system/menu';
 import { hasPermissionCode } from '@/permissions';
 
+/*
+ * Boundary:
+ * 菜单管理页负责 Ant Design Vue 树表格和菜单资源表单体验，不直接决定动态路由最终可访问性。
+ * 后端菜单授权和 `@RequiresPermission` 仍是权限边界。
+ */
 const canView = computed(() => hasPermissionCode('system:menu:list'));
 const canCreate = computed(() => hasPermissionCode('system:menu:add'));
 const canEdit = computed(() => hasPermissionCode('system:menu:edit'));

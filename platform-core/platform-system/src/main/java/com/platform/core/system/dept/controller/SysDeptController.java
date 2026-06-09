@@ -22,6 +22,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 部门管理 Controller，承载组织树查询、详情、维护、排序、状态和删除入口。
+ *
+ * <p>职责：声明部门管理 permission code 和审计动作，并把请求委托给服务层。
+ *
+ * <p>边界：不直接拼接树结构 SQL，不绕过服务层校验父子关系和占用关系。
+ *
+ * <p>当前阶段能力：支持后台组织树维护，供用户部门归属和数据权限后续扩展使用。
+ */
 @RestController
 @RequestMapping("/api/system/depts")
 public class SysDeptController {

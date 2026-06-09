@@ -19,8 +19,25 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Service;
 
 /**
- * system 模块在这里把 Keycloak subject 解释成本地业务用户。这样 framework 只依赖 `CurrentUserProvider` 契约，不需要读取
- * `sys_user`、角色或菜单表。
+ * 当前用户提供者的 system 实现，负责把 Keycloak JWT subject 映射成本地业务用户上下文。
+ *
+ * <p>职责：读取 `sys_user`、角色和菜单权限，组装 framework 所需的 `CurrentUser`。
+ *
+ * <p>边界：不创建本地用户，不保存 token，不实现 Keycloak 登录。
+ *
+ * <p>当前阶段能力：支持超级管理员 `*:*:*`、角色权限码和单一 data scope 摘要。
+ */
+/*
+ * Boundary:
+ * Keycloak 负责身份认证；本类只消费 JWT subject 并加载本地授权数据。
+ */
+/*
+ * Deferred:
+ * 用户自动同步、缓存失效和多租户上下文暂未实现，后续必须单独设计。
+ */
+/*
+ * Risk:
+ * `keycloak_user_id` 绑定错误会导致真实用户获得错误业务权限，种子数据上线前必须替换占位 subject。
  */
 @Service
 public class SystemCurrentUserProvider implements CurrentUserProvider {
@@ -38,6 +55,15 @@ public class SystemCurrentUserProvider implements CurrentUserProvider {
     this.menuService = menuService;
   }
 
+  /**
+   * 获取当前业务用户上下文。
+   *
+   * <p>关键规则：JWT subject 必须能映射到未删除且未禁用的本地用户。
+   *
+   * <p>权限影响：超级管理员角色会获得 `*:*:*`，普通用户从菜单权限码计算授权集合。
+   *
+   * <p>返回含义：无法映射时返回 empty，由 framework 拒绝访问。
+   */
   @Override
   public Optional<CurrentUser> getCurrentUser() {
     String subject = resolveSubject();

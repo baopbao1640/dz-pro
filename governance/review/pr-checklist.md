@@ -26,6 +26,10 @@
 
 - 父工程统一管理依赖版本，子模块不擅自固定冲突版本。
 - 新增 Controller、Service、Mapper、权限和审计逻辑具备必要注释。
+- 核心 Controller、Service、Provider、Handler、Aspect、Security、Audit、DataScope、Permission、Mapper 接口具备中文类头 Javadoc。
+- public controller/service/provider/authz/audit/data-scope/security handler 方法具备中文 Javadoc，且说明目的、规则、边界、权限或异常影响。
+- framework 关键类已使用 Boundary / Deferred / Risk 说明职责边界、暂缓事项和风险。
+- 不存在孤立 `TODO` 和复述代码的低价值中文注释。
 - 授权、认证、审计、数据权限不能只有前端控制。
 - 异常响应、分页、参数校验和事务边界已验证。
 - 已执行后端格式、Checkstyle 和测试，或说明本轮不适用原因。
@@ -51,6 +55,7 @@
 
 - 本次修改范围。
 - 已执行验证。
+- `scripts/check-comments.sh` 执行结果。
 - 未执行验证及原因。
 - Deferred、风险和技术债。
 - 明确是否允许提交。

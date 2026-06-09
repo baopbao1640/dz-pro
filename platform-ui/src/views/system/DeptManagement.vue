@@ -6,6 +6,11 @@ import { changeDeptStatus, createDept, getDept, listDeptTree, updateDept } from 
 import type { DeptSaveDTO, DeptTreeVO } from '@/api/system/dept';
 import { hasPermissionCode } from '@/permissions';
 
+/*
+ * Boundary:
+ * 部门管理页负责组织树展示和表单维护体验，不在前端计算 data scope。
+ * 后续 DEPT_AND_CHILD 数据权限必须由后端部门树和 SQL 条件共同保证。
+ */
 interface DeptSearchForm {
   deptName?: string;
   status?: '0' | '1';

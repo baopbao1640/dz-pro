@@ -14,6 +14,10 @@ import {
 } from '@/api/system/role';
 import { hasPermissionCode } from '@/permissions';
 
+/*
+ * Boundary:
+ * 角色管理页只维护后台列表、表单弹窗和状态切换体验；菜单授权和数据范围真实生效仍由后端角色关系与 data scope 实现保证。
+ */
 const canView = computed(() => hasPermissionCode('system:role:list'));
 const canCreate = computed(() => hasPermissionCode('system:role:add'));
 const canEdit = computed(() => hasPermissionCode('system:role:edit'));

@@ -7,6 +7,15 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+/**
+ * 部门 Mapper，封装 `sys_dept` 组织树查询和约束检查。
+ *
+ * <p>职责：提供部门树列表、启用子节点、用户占用和同级名称唯一性查询。
+ *
+ * <p>边界：不生成数据权限条件，不决定部门树业务校验结果。
+ *
+ * <p>当前阶段能力：支撑部门管理 CRUD 和后续 data scope 部门关系计算。
+ */
 @Mapper
 public interface SysDeptMapper extends BaseMapper<SysDept> {
 

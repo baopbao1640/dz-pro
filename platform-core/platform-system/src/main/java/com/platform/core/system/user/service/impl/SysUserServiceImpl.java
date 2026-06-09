@@ -20,6 +20,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+/**
+ * 用户管理服务实现，负责本地业务用户、角色关系和岗位关系的事务性维护。
+ *
+ * <p>职责：校验 Keycloak subject 映射唯一性、维护软删除用户数据和授权关系。
+ *
+ * <p>边界：不调用 Keycloak 管理 API，不处理登录态和 token。
+ *
+ * <p>当前阶段能力：支持 Phase 3B 当前用户映射、分页 total 修复和关系分配。
+ */
 @Service
 public class SysUserServiceImpl implements SysUserService {
 

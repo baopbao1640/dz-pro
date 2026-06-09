@@ -5,8 +5,13 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 审计脱敏放在 framework，是为了让所有日志入口先共享同一条安全底线。Keycloak token、 session、MFA 和 credential
- * 相关字段不得进入审计明文，避免日志系统扩大敏感数据暴露面。
+ * 审计脱敏工具，负责在事件进入持久化前屏蔽敏感字段并限制文本长度。
+ *
+ * <p>职责：统一处理 token、session、MFA、secret、credential 等敏感键。
+ *
+ * <p>边界：只做启发式字段名脱敏，不解析复杂对象语义。
+ *
+ * <p>当前阶段能力：支持 Map 参数递归脱敏和文本截断。
  */
 public final class AuditSanitizer {
 

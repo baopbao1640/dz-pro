@@ -21,6 +21,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 岗位管理 Controller，承载岗位分页、详情、创建、修改、状态和删除入口。
+ *
+ * <p>职责：声明岗位管理 permission code 和审计动作，并委托服务层处理业务规则。
+ *
+ * <p>边界：不直接维护用户岗位关系，不绕过岗位占用检查。
+ *
+ * <p>当前阶段能力：支持岗位基础维护和分页 total 正确返回。
+ */
 @RestController
 @RequestMapping("/api/system/posts")
 public class SysPostController {

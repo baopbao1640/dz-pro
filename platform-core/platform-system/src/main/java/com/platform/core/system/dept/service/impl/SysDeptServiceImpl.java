@@ -17,6 +17,15 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * 部门管理服务实现，负责组织树结构、状态、排序和删除约束校验。
+ *
+ * <p>职责：维护父子部门关系、ancestors、同级名称唯一性和占用检查。
+ *
+ * <p>边界：不在本阶段展开 DEPT_AND_CHILD 数据权限 SQL，只保证部门基础数据正确。
+ *
+ * <p>当前阶段能力：支持后台组织维护和后续数据权限扩展所需的部门树基础。
+ */
 @Service
 public class SysDeptServiceImpl implements SysDeptService {
 
