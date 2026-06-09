@@ -2,6 +2,12 @@
 
 本清单是强制工程规范，不是参考文档。所有提交和 PR 前必须完成检查。
 
+## 006 注释治理状态
+
+`006-code-comment-standardization` 已进入长期增量治理模式。
+
+后续不再做“大爆炸式全项目补注释”，而是在 Feature 开发过程中持续治理新增和修改代码。PR Review 必须确认本次变更范围内的注释符合 `governance/comments/code-comment-policy.md`，并确认未引入低价值注释噪音。
+
 ## 范围检查
 
 - 是否以 PRD 和当前 Feature Spec 为最高依据。
@@ -9,6 +15,7 @@
 - 是否避免无关重构、无关格式化和无关依赖变更。
 - 是否已经读取当前 Feature 的 `progress.md`。
 - 是否按阶段更新 `progress.md`。
+- 是否已经读取 governance，并在开发后执行 Governance Review。
 
 ## 禁止提交内容
 
@@ -39,6 +46,7 @@
 - 使用 Ant Design Vue 成熟组件和后台管理实践。
 - 页面包含 loading、empty、error、disabled 和权限不足状态。
 - 权限按钮、动态路由和接口 401/403 处理一致。
+- 修改 router、permissions、store、API client 或复杂页面权限状态时，必须同步检查有效注释。
 - 未引入无关视觉主题、装饰性页面或重复组件。
 - 已执行前端格式、lint 和构建，或说明本轮不适用原因。
 
@@ -48,6 +56,7 @@
 - `progress.md` 使用统一中文结构。
 - 已实现、scaffold、intentionally deferred、技术债和未来扩展点区分清楚。
 - 验证结果写入 `progress.md`，但不粘贴大段命令输出。
+- 006 相关 Deferred 不得被后续 Feature 默认为必须一次性全量补齐；应按实际变更范围增量治理。
 
 ## Governance Review 结论
 
@@ -58,4 +67,5 @@
 - `scripts/check-comments.sh` 执行结果。
 - 未执行验证及原因。
 - Deferred、风险和技术债。
+- 注释治理是否符合长期增量治理原则。
 - 明确是否允许提交。

@@ -2,6 +2,12 @@
 
 本规范是强制工程规范，不是参考文档。所有开发结束后必须执行与修改范围匹配的验证。
 
+## 006 注释治理状态
+
+`006-code-comment-standardization` 已完成 Phase-1，并进入长期增量治理模式。
+
+后续不再做“大爆炸式全项目补注释”。每个 Feature 必须在新增和修改代码范围内持续执行注释治理，并把 `scripts/check-comments.sh`、Governance Review、PR Checklist 作为提交前强制门禁。
+
 ## 通用检查
 
 每次提交前至少执行：
@@ -53,7 +59,7 @@ git diff --check
 scripts/check-spec-progress.sh
 ```
 
-如果只修改 `governance/` 且未修改业务代码，可不执行 Java/Vue 构建，但必须在结论中明确“不适用”。
+如果只修改 `governance/` 且未修改业务代码，可不执行 Java/Vue 构建，但必须在结论中明确“不适用”。如果本轮同时收尾某个已修改 Java/Vue 的 Feature，应按该 Feature 的完整验证要求执行后端和前端检查。
 
 ## 注释治理检查
 
@@ -64,6 +70,8 @@ scripts/check-comments.sh
 ```
 
 该脚本用于强制检查核心 Java 类头 Javadoc、public 入口方法 Javadoc、framework 关键类 Boundary / Deferred / Risk、孤立 `TODO` 和明显低价值中文注释。脚本是启发式门禁，不能替代人工 Governance Review；如果脚本通过但注释仍无法说明职责、边界和风险，Review 必须要求补充。
+
+006 Phase-1 Deferred 范围包括 MyBatis XML SQL 注释治理、DTO / VO / Entity 全量注释、全量 getter/setter 注释、前端全部页面注释覆盖、CI 集成和更复杂 AST / 语义级 comment check。上述事项进入长期增量治理，不应在普通 Feature 中被要求一次性全量扫改。
 
 ## 验证结果记录
 

@@ -4,6 +4,18 @@
 
 注释治理参考阿里巴巴 Java 开发手册的核心思想：注释应服务可维护性、领域理解和边界说明，不能替代清晰命名，也不能成为复述代码的噪音。
 
+## 006 Phase-1 结论
+
+`006-code-comment-standardization` 已完成 Phase-1，项目已形成“有价值注释强制化”体系。
+
+006 进入长期增量治理模式。后续不再做“大爆炸式全项目补注释”，而是在每个 Feature 开发过程中，围绕新增或修改代码持续治理注释质量。
+
+后续新增和修改代码必须默认遵守本规范，并通过：
+
+- `scripts/check-comments.sh`
+- Governance Review
+- PR Checklist
+
 ## 基本原则
 
 - 注释必须说明对外契约、设计原因、边界条件、异常约束或非显然业务规则。
@@ -33,7 +45,14 @@
 - 公共 API 使用 Javadoc 或清晰的中文说明。
 - 复杂方法内部只在关键分支前添加短注释。
 - 权限、审计、数据范围、事务边界和异常转换必须说明设计原因。
-- Mapper XML 中的动态 SQL 如包含权限或数据范围条件，必须说明条件来源和适用范围。
+- Mapper XML 中的动态 SQL 如包含权限或数据范围条件，应在修改该 SQL 的 Feature 内说明条件来源和适用范围；006 Phase-1 不做全量 XML 扫改。
+
+## 长期增量治理
+
+- 新增或修改 Controller、Service、ServiceImpl、Config、Aspect、Annotation、Provider、Handler、Interceptor、Resolver、Context、Route、Audit、Security、DataScope、Permission、Mapper 接口时，必须同步检查类头和关键 public 方法注释。
+- 新增或修改前端 router、permissions、store、API client、复杂页面权限状态时，必须说明动态路由、按钮权限、401/403、接口边界或页面结构中的非显然规则。
+- DTO、VO、Entity、getter/setter 不要求机械补全注释；只有存在非显然业务含义、兼容约束、安全影响或字段映射风险时才补充有效注释。
+- MyBatis XML、CI 集成、AST / 语义级检查属于后续治理增强方向，不阻塞 006 Phase-1 收尾。
 
 ## Review 要求
 
@@ -44,3 +63,4 @@ Governance Review 必须检查：
 - 新增公共能力是否缺少契约说明。
 - 安全、权限、审计、数据范围逻辑是否缺少边界说明。
 - TODO、Deferred 和技术债是否已经进入对应 `progress.md`。
+- 本 Feature 是否按增量治理原则处理新增和修改范围，而不是制造无关注释噪音。

@@ -1,75 +1,100 @@
 # 当前阶段
 
-006-code-comment-standardization 实施阶段已完成本轮注释标准化、脚本门禁和验证，当前停止在提交前审阅状态。
+006-code-comment-standardization 已正式收敛为 `Phase-1 Completed`。
+
+本阶段完成的是第一阶段注释标准化落地：建立“有价值注释强制化”的代码注释治理体系，并完成平台底座关键区域的首轮覆盖。006 不再继续扩大为全项目补注释行动，也不进入 007 或新业务功能开发。
 
 # 当前目标
 
-基于已提交的 `governance/comments/code-comment-policy.md`，并参考阿里巴巴 Java 开发手册中注释应准确反映设计思想、业务逻辑和代码意图的原则，对平台底座进行可移交、可维护、可强制检查的注释标准化。
+基于 `governance/comments/code-comment-policy.md`，参考阿里巴巴 Java 开发手册中注释应准确反映设计思想、业务逻辑和代码意图的原则，完成平台底座可移交、可维护、可强制检查的注释标准化第一阶段。
+
+当前目标已经达成：后续新增和修改代码默认遵守 `governance/comments/code-comment-policy.md`，并在 Feature 开发过程中持续增量治理。
 
 # 当前完成情况
 
-- 已读取 `governance/` 强制工程规范入口。
-- 已读取 `specs/000-documentation-governance/`。
-- 已读取 `specs/004-code-comment-governance/`。
-- 已读取 `specs/005-security-authz-hardening/`。
-- 已创建 006 Spec 四件套。
-- 已新增 `scripts/check-comments.sh`，可检查核心 Java 类头 Javadoc、public 入口方法 Javadoc、framework Boundary / Deferred / Risk、孤立 `TODO` 和明显低价值中文注释。
-- 已更新 `governance/testing/governance-checks.md`，把 `scripts/check-comments.sh` 纳入每次开发后的强制检查。
-- 已更新 `governance/review/pr-checklist.md`，补充注释治理 Review 项。
-- 已完成 006A `platform-framework` 中 config、security、audit、web 重点类注释标准化。
-- 已完成 006B `platform-system` 中 auth、audit、user、role、menu、dept、post 核心 Controller、Service、ServiceImpl、Mapper 类头注释标准化。
-- 已完成 006C 前端 router、permissions、store、auth API client 和 system 页面结构注释标准化。
-- 已确认未修改 SQL、API 路径、权限逻辑、返回结构或业务流程。
+- 已创建并维护 `specs/006-code-comment-standardization/` 四件套。
+- 已完成 `platform-framework` 中 config、security、audit、web 重点类注释标准化。
+- 已完成 `platform-system` 中 auth、audit、user、role、menu、dept、post 核心模块注释标准化。
+- 已完成前端 auth API client、router、permissions、user store 和 system 页面结构相关注释标准化。
+- 已补充 security、authz、datascope、audit、dynamic-route、Keycloak mapping、permission code enforce、CurrentUser、SecurityConfig、GlobalExceptionHandler 等重点区域的 Boundary / Deferred / Risk 说明。
+- 已新增 `scripts/check-comments.sh`，用于本地启发式检查核心 Java 类头 Javadoc、public 入口方法 Javadoc、framework Boundary / Deferred / Risk、孤立 `TODO` 和明显低价值中文注释。
+- 已把 `scripts/check-comments.sh` 接入 `governance/testing/governance-checks.md`。
+- 已把注释治理检查接入 `governance/review/pr-checklist.md`。
+- 已确认本阶段未修改业务逻辑、SQL、API 路径、权限逻辑、返回结构或业务流程。
 
 # 当前架构决策
 
-- 本阶段是注释标准化实施，不继续扩展抽象规范。原因是 `004` 已经定义注释治理原则，006 必须把规则落到代码和脚本门禁。
-- 采用“有价值注释强制化”，不机械覆盖所有代码。原因是复述型注释会降低可维护性，并违背治理入口要求。
-- 检查脚本先采用启发式规则。原因是当前目标是建立本地可执行门禁，不引入 Checkstyle/ESLint 插件扩展或复杂 AST 解析。
-- 分批覆盖 framework、system、frontend。原因是跨全项目一次性扫改会放大 review 噪音和冲突风险。
-- 前端注释只补充权限、路由、API client 和后台页面结构边界。原因是 Vue 页面大量交互细节如果机械补注释会变成低价值噪音。
+- 006 Phase-1 采用“首轮重点覆盖 + 后续增量治理”的策略，不做大爆炸式全项目补注释。
+- 项目采用“有价值注释强制化”，不是机械地为所有类、字段、getter/setter 和简单 CRUD 补低价值注释。
+- `scripts/check-comments.sh` 保持为本地启发式门禁，作为 Governance Review 的最低自动化检查，不替代人工 Review。
+- 后续 Feature 开发时，新增或修改的 Controller、Service、Provider、Handler、Aspect、Security、Audit、DataScope、Permission、Mapper、前端权限/路由/API client 等代码必须同步遵守注释治理规范。
+- 006 不再作为开放式长期实施 Feature 扩张；长期治理入口转移到 governance 和 PR Checklist。
 
 # 已实现能力
 
-- 006 Feature 目录和四件套。
-- 注释治理检查脚本。
-- governance 强制检查入口更新。
-- framework 关键安全、授权、审计、数据权限、动态路由类的 Boundary / Deferred / Risk 注释。
-- system 核心管理域 Controller、Service、ServiceImpl、Mapper 类头注释。
-- auth/audit/provider/permission/data-scope/dynamic-route 关键 public 方法注释。
-- 前端动态路由、权限判断、用户 store、auth API client 和系统管理页面结构注释。
+- framework 注释标准化。
+- system 核心模块注释标准化。
+- 前端 auth/router/permission 注释标准化。
+- Boundary / Deferred / Risk 注释体系。
+- `scripts/check-comments.sh` 注释检查脚本。
+- Governance Review 接入。
+- PR Checklist 接入。
+- Feature 后续增量治理约束。
 
 # Deferred（暂缓事项）
 
-- 暂不接入 Maven、Checkstyle、ESLint 或 CI，只通过独立 shell 脚本作为本地门禁。
-- 暂不要求 DTO、VO、Entity、简单 getter/setter 补注释。
-- 暂不修改 SQL、API、权限逻辑、返回结构或业务流程。
-- 暂不处理业务风险本身，只通过注释记录 Boundary / Deferred / Risk。
-- 暂不全量审计所有普通 CRUD public 方法的逐方法 Javadoc；本轮优先覆盖 auth、audit、provider、permission、data-scope、dynamic-route 和核心类头，避免产生复述型注释。
+以下内容明确属于 Deferred，不在 006 Phase-1 继续扩展：
+
+- MyBatis XML SQL 注释治理。
+- DTO / VO / Entity 全量注释。
+- 全量 getter/setter 注释。
+- 前端全部页面注释覆盖。
+- CI 集成。
+- 更复杂 AST / 语义级 comment check。
+
+Deferred 原因：
+
+- MyBatis XML 和普通 CRUD 的注释价值依赖具体 SQL、权限和数据范围语义，适合在后续修改对应查询时增量治理。
+- DTO / VO / Entity 和 getter/setter 大量属于结构性代码，机械补注释会形成低价值噪音。
+- 前端全部页面一次性补注释会放大 diff 和 Review 成本，后续只在页面权限、路由、API、状态管理、复杂交互发生变化时补充有效注释。
+- CI 和 AST 级检查属于工程能力增强，应在后续治理任务中单独评估，不阻塞 006 Phase-1 收尾。
 
 # 风险与技术债
 
-- 风险：启发式脚本可能存在漏报或少量误报。当前接受原因是本阶段先建立可执行门禁，后续可逐步增强解析精度。
-- 风险：注释标准化如果混入格式化或逻辑变更，会影响 review。处理方向是本阶段严格限制 diff，只允许注释、脚本和文档变更。
-- 技术债：DTO、VO、Entity、普通 CRUD 方法和 MyBatis XML 非显然 SQL 注释尚未全量治理。处理方向是后续按 006 后续批次继续推进，仍坚持有价值注释而不是机械覆盖。
-- 风险：`pnpm build` 会生成 `platform-ui/dist/`，Maven 会更新 `platform-core/**/target/`。这些都是构建产物，必须保持不提交。
+- 风险：启发式脚本可能漏报复杂语义问题。处理方向是 Governance Review 必须继续人工判断注释是否说明职责、边界、风险和设计原因。
+- 风险：后续 Feature 如果绕过 `scripts/check-comments.sh`、Governance Review 或 PR Checklist，注释体系会退化。处理方向是把三项检查作为提交前强制门禁。
+- 技术债：MyBatis XML、DTO / VO / Entity、普通 CRUD 方法和部分前端页面尚未全量治理。处理方向是长期增量治理，不进行全项目扫改。
+- 技术债：CI 集成和 AST 级检查尚未实现。处理方向是后续单独建立治理增强任务。
 
 # 下一阶段计划
 
-- 人工审阅本轮 diff，确认只有注释、脚本和文档治理变更。
-- 提交前只 stage 本轮允许文件，排除 `target/`、`dist/`、`node_modules/`、`docs/prd-generation-context.md`。
-- 后续如继续注释治理，优先处理 MyBatis XML 非显然 SQL 注释和普通 CRUD public 方法中确有边界/风险的方法。
+006 本身不再继续扩张。后续计划只保留为长期增量治理要求：
+
+- 后续新增代码必须通过 `scripts/check-comments.sh`。
+- 后续新增代码必须完成 Governance Review。
+- 后续新增代码必须按 `governance/review/pr-checklist.md` 完成 PR Checklist。
+- 后续 Feature 默认遵守 `governance/comments/code-comment-policy.md`。
+- 如果某个 Feature 修改 MyBatis XML、DTO / VO / Entity、复杂前端页面或 CI 配置，应在该 Feature 内按实际变更范围增量补齐有价值注释。
+
+# 当前结论
+
+006 已正式完成第一阶段（Phase-1）。
+
+当前项目已形成“有价值注释强制化”体系。后续 Feature 默认遵守 `governance/comments/code-comment-policy.md`，并通过 `scripts/check-comments.sh`、Governance Review、PR Checklist 三道门禁持续执行。
+
+006 不再作为全项目补注释任务继续扩张；后续注释治理进入长期增量治理模式。
 
 # 验证结果
 
+本次收尾验证结果：
+
 - `bash scripts/check-comments.sh`：通过。
-- `cd platform-core && mvn spotless:check checkstyle:check test`：通过。PowerShell 无 `mvn`，实际使用 WSL 路径执行：`bash -lc "cd /mnt/f/AIworkspance/content/platform-core && mvn spotless:check checkstyle:check test"`。
-- `cd platform-ui && pnpm lint`：通过。实际使用 WSL 路径执行。
-- `cd platform-ui && pnpm build`：通过，仍存在 Vite 大 chunk warning；这是既有前端构建风险，不属于本阶段业务逻辑变更。
-- `scripts/check-spec-progress.sh`：通过。实际使用 WSL 路径执行。
-- `git diff --check`：通过，仅输出 LF/CRLF 工作区提示，无 whitespace error。
-- 已运行静态搜索确认目标范围内无孤立 `TODO`、明显复述型中文注释，以及 Javadoc 放在常见注解之后的格式风险。
+- `cd platform-core && mvn spotless:check checkstyle:check test`：通过。
+- `cd platform-ui && pnpm lint`：通过。
+- `cd platform-ui && pnpm build`：通过，仍存在 Vite chunk size warning，未阻塞构建。
+- `scripts/check-spec-progress.sh`：通过。
+- `git diff --check`：通过，仅 target 产物存在 LF/CRLF 工作区提示，无 whitespace error。
 
 # Agent 协作备注
 
-本阶段由单 Agent 串行处理注释标准化，避免多个 Agent 同时修改同一批 Java/Vue 文件造成注释冲突。后续如果多 Agent 继续推进，必须按 framework、system 子域、frontend 子域拆分，禁止全项目扫改。
+本次收尾只更新 006 状态和 governance 长期治理说明，不修改业务代码，不进入 007，不提交 commit。后续 Agent 开发前必须读取 governance，开发后必须执行 Governance Review，并把注释治理作为 Feature 内增量责任处理。
