@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.core.system.menu.mapper.SysMenuMapper">
+    <resultMap id="SysMenuResultMap" type="com.platform.core.system.menu.domain.SysMenu">
+        <id column="id" property="id"/>
+        <result column="menu_name" property="menuName"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="order_num" property="orderNum"/>
+        <result column="path" property="path"/>
+        <result column="component" property="component"/>
+        <result column="query_param" property="queryParam"/>
+        <result column="route_name" property="routeName"/>
+        <result column="is_frame" property="isFrame"/>
+        <result column="is_cache" property="isCache"/>
+        <result column="menu_type" property="menuType"/>
+        <result column="visible" property="visible"/>
+        <result column="status" property="status"/>
+        <result column="permission_code" property="permissionCode"/>
+        <result column="icon" property="icon"/>
+        <result column="del_flag" property="delFlag"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+    <sql id="menuColumns">
+        id, menu_name, parent_id, order_num, path, component, query_param, route_name,
+        is_frame, is_cache, menu_type, visible, status, permission_code, icon, del_flag,
+        create_by, create_time, update_by, update_time, remark
+    </sql>
+
+    <sql id="menuColumnsWithAlias">
+        m.id, m.menu_name, m.parent_id, m.order_num, m.path, m.component, m.query_param,
+        m.route_name, m.is_frame, m.is_cache, m.menu_type, m.visible, m.status,
+        m.permission_code, m.icon, m.del_flag, m.create_by, m.create_time, m.update_by,
+        m.update_time, m.remark
+    </sql>
+
+    <select id="selectMenuList" resultMap="SysMenuResultMap">
+        SELECT <include refid="menuColumns"/>
+        FROM sys_menu
+        WHERE del_flag = '0'
+        <if test="query != null and query.menuName != null and query.menuName != ''">
+            AND menu_name ILIKE CONCAT('%', #{query.menuName}, '%')
+        </if>
+        <if test="query != null and query.menuType != null and query.menuType != ''">
+            AND menu_type = #{query.menuType}
+        </if>
+        <if test="query != null and query.permissionCode != null and query.permissionCode != ''">
+            AND permission_code ILIKE CONCAT('%', #{query.permissionCode}, '%')
+        </if>
+        <if test="query != null and query.status != null and query.status != ''">
+            AND status = #{query.status}
+        </if>
+        ORDER BY parent_id ASC, order_num ASC, id ASC
+    </select>
+
+    <select id="selectActiveById" resultMap="SysMenuResultMap">
+        SELECT <include refid="menuColumns"/>
+        FROM sys_menu
+        WHERE id = #{id}
+          AND del_flag = '0'
+    </select>
+
+    <select id="countActivePermissionCode" resultType="java.lang.Long">
+        SELECT COUNT(1)
+        FROM sys_menu
+        WHERE permission_code = #{permissionCode}
+          AND del_flag = '0'
+        <if test="excludeId != null">
+            AND id != #{excludeId}
+        </if>
+    </select>
+
+    <select id="countActiveChildren" resultType="java.lang.Long">
+        SELECT COUNT(1)
+        FROM sys_menu
+        WHERE parent_id = #{parentId}
+          AND del_flag = '0'
+    </select>
+
+    <select id="selectEnabledMenusByRoleIds" resultMap="SysMenuResultMap">
+        SELECT DISTINCT <include refid="menuColumnsWithAlias"/>
+        FROM sys_menu m
+        JOIN sys_role_menu rm ON rm.menu_id = m.id
+        JOIN sys_role r ON r.id = rm.role_id AND r.del_flag = '0' AND r.status = '0'
+        WHERE m.del_flag = '0'
+          AND m.status = '0'
+          AND m.menu_type IN ('M', 'C')
+          AND r.id IN
+        <foreach collection="roleIds" item="roleId" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+        ORDER BY m.parent_id ASC, m.order_num ASC, m.id ASC
+    </select>
+
+    <select id="selectEnabledPermissionCodesByRoleIds" resultType="java.lang.String">
+        SELECT DISTINCT m.permission_code
+        FROM sys_menu m
+        JOIN sys_role_menu rm ON rm.menu_id = m.id
+        JOIN sys_role r ON r.id = rm.role_id AND r.del_flag = '0' AND r.status = '0'
+        WHERE m.del_flag = '0'
+          AND m.status = '0'
+          AND m.permission_code IS NOT NULL
+          AND m.permission_code != ''
+          AND r.id IN
+        <foreach collection="roleIds" item="roleId" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+        ORDER BY m.permission_code ASC
+    </select>
+</mapper>

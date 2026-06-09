@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.core.system.user.mapper.SysUserMapper">
+    <resultMap id="UserListResultMap" type="com.platform.core.system.user.vo.UserListVO">
+        <id property="id" column="id"/>
+        <result property="keycloakUserId" column="keycloak_user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="postNames" column="post_names"/>
+        <result property="roleNames" column="role_names"/>
+        <result property="email" column="email"/>
+        <result property="phoneNumber" column="phone_number"/>
+        <result property="sex" column="sex"/>
+        <result property="status" column="status"/>
+        <result property="lastSyncTime" column="last_sync_time"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <resultMap id="UserDetailResultMap" type="com.platform.core.system.user.vo.UserDetailVO" extends="UserListResultMap"/>
+
+    <sql id="UserDisplayColumns">
+        u.id,
+        u.keycloak_user_id,
+        u.user_name,
+        u.nick_name,
+        u.dept_id,
+        d.dept_name,
+        u.email,
+        u.phone_number,
+        u.sex,
+        u.status,
+        u.last_sync_time,
+        u.create_time,
+        COALESCE(STRING_AGG(DISTINCT p.post_name, ','), '') AS post_names,
+        COALESCE(STRING_AGG(DISTINCT r.role_name, ','), '') AS role_names
+    </sql>
+
+    <sql id="UserDisplayJoins">
+        LEFT JOIN sys_dept d ON d.id = u.dept_id AND d.del_flag = '0'
+        LEFT JOIN sys_user_post up ON up.user_id = u.id
+        LEFT JOIN sys_post p ON p.id = up.post_id AND p.del_flag = '0'
+        LEFT JOIN sys_user_role ur ON ur.user_id = u.id
+        LEFT JOIN sys_role r ON r.id = ur.role_id AND r.del_flag = '0'
+    </sql>
+
+    <select id="selectUserPage" resultMap="UserListResultMap">
+        SELECT <include refid="UserDisplayColumns"/>
+        FROM sys_user u
+        <include refid="UserDisplayJoins"/>
+        WHERE u.del_flag = '0'
+        <if test="query.deptId != null and query.includeChildren == true">
+            AND (u.dept_id = #{query.deptId}
+                 OR d.ancestors = CAST(#{query.deptId} AS VARCHAR)
+                 OR d.ancestors LIKE CONCAT(CAST(#{query.deptId} AS VARCHAR), ',%')
+                 OR d.ancestors LIKE CONCAT('%,', CAST(#{query.deptId} AS VARCHAR), ',%')
+                 OR d.ancestors LIKE CONCAT('%,', CAST(#{query.deptId} AS VARCHAR)))
+        </if>
+        <if test="query.deptId != null and query.includeChildren != true">
+            AND u.dept_id = #{query.deptId}
+        </if>
+        <if test="query.userName != null and query.userName != ''">
+            AND u.user_name ILIKE CONCAT('%', #{query.userName}, '%')
+        </if>
+        <if test="query.nickName != null and query.nickName != ''">
+            AND u.nick_name ILIKE CONCAT('%', #{query.nickName}, '%')
+        </if>
+        <if test="query.phoneNumber != null and query.phoneNumber != ''">
+            AND u.phone_number ILIKE CONCAT('%', #{query.phoneNumber}, '%')
+        </if>
+        <if test="query.status != null and query.status != ''">
+            AND u.status = #{query.status}
+        </if>
+        <if test="query.createdStartTime != null">
+            AND u.create_time &gt;= #{query.createdStartTime}
+        </if>
+        <if test="query.createdEndTime != null">
+            AND u.create_time &lt;= #{query.createdEndTime}
+        </if>
+        GROUP BY u.id, d.dept_name
+        ORDER BY u.create_time DESC, u.id DESC
+    </select>
+
+    <select id="countUserPage" resultType="long">
+        SELECT COUNT(DISTINCT u.id)
+        FROM sys_user u
+        <include refid="UserDisplayJoins"/>
+        WHERE u.del_flag = '0'
+        <if test="query.deptId != null and query.includeChildren == true">
+            AND (u.dept_id = #{query.deptId}
+                 OR d.ancestors = CAST(#{query.deptId} AS VARCHAR)
+                 OR d.ancestors LIKE CONCAT(CAST(#{query.deptId} AS VARCHAR), ',%')
+                 OR d.ancestors LIKE CONCAT('%,', CAST(#{query.deptId} AS VARCHAR), ',%')
+                 OR d.ancestors LIKE CONCAT('%,', CAST(#{query.deptId} AS VARCHAR)))
+        </if>
+        <if test="query.deptId != null and query.includeChildren != true">
+            AND u.dept_id = #{query.deptId}
+        </if>
+        <if test="query.userName != null and query.userName != ''">
+            AND u.user_name ILIKE CONCAT('%', #{query.userName}, '%')
+        </if>
+        <if test="query.nickName != null and query.nickName != ''">
+            AND u.nick_name ILIKE CONCAT('%', #{query.nickName}, '%')
+        </if>
+        <if test="query.phoneNumber != null and query.phoneNumber != ''">
+            AND u.phone_number ILIKE CONCAT('%', #{query.phoneNumber}, '%')
+        </if>
+        <if test="query.status != null and query.status != ''">
+            AND u.status = #{query.status}
+        </if>
+        <if test="query.createdStartTime != null">
+            AND u.create_time &gt;= #{query.createdStartTime}
+        </if>
+        <if test="query.createdEndTime != null">
+            AND u.create_time &lt;= #{query.createdEndTime}
+        </if>
+    </select>
+
+    <select id="selectUserDetail" resultMap="UserDetailResultMap">
+        SELECT <include refid="UserDisplayColumns"/>
+        FROM sys_user u
+        <include refid="UserDisplayJoins"/>
+        WHERE u.id = #{id}
+          AND u.del_flag = '0'
+        GROUP BY u.id, d.dept_name
+    </select>
+
+    <select id="selectActiveByKeycloakUserId" resultType="com.platform.core.system.user.domain.SysUser">
+        SELECT *
+        FROM sys_user
+        WHERE keycloak_user_id = #{keycloakUserId}
+          AND del_flag = '0'
+    </select>
+
+    <select id="selectRoleIdsByUserId" resultType="long">
+        SELECT role_id
+        FROM sys_user_role
+        WHERE user_id = #{id}
+        ORDER BY role_id ASC
+    </select>
+
+    <select id="selectPostIdsByUserId" resultType="long">
+        SELECT post_id
+        FROM sys_user_post
+        WHERE user_id = #{id}
+        ORDER BY post_id ASC
+    </select>
+
+    <select id="countActiveByKeycloakUserId" resultType="java.lang.Long">
+        SELECT COUNT(1)
+        FROM sys_user
+        WHERE keycloak_user_id = #{keycloakUserId}
+          AND del_flag = '0'
+        <if test="excludeId != null">
+            AND id != #{excludeId}
+        </if>
+    </select>
+
+    <delete id="deleteRolesByUserId">
+        DELETE FROM sys_user_role
+        WHERE user_id = #{id}
+    </delete>
+
+    <delete id="deletePostsByUserId">
+        DELETE FROM sys_user_post
+        WHERE user_id = #{id}
+    </delete>
+
+    <insert id="insertUserRoles">
+        INSERT INTO sys_user_role (id, user_id, role_id, create_time)
+        VALUES
+        <foreach collection="relations" item="relation" separator=",">
+            (#{relation.id}, #{id}, #{relation.relationId}, NOW())
+        </foreach>
+    </insert>
+
+    <insert id="insertUserPosts">
+        INSERT INTO sys_user_post (id, user_id, post_id, create_time)
+        VALUES
+        <foreach collection="relations" item="relation" separator=",">
+            (#{relation.id}, #{id}, #{relation.relationId}, NOW())
+        </foreach>
+    </insert>
+</mapper>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.core.system.dept.mapper.SysDeptMapper">
+    <select id="selectActiveById" resultType="com.platform.core.system.dept.domain.SysDept">
+        SELECT *
+        FROM sys_dept
+        WHERE id = #{id}
+          AND del_flag = '0'
+    </select>
+
+    <select id="selectDeptList" resultType="com.platform.core.system.dept.domain.SysDept">
+        SELECT *
+        FROM sys_dept
+        WHERE del_flag = '0'
+        <if test="query != null and query.deptName != null and query.deptName != ''">
+            AND dept_name ILIKE CONCAT('%', #{query.deptName}, '%')
+        </if>
+        <if test="query != null and query.status != null and query.status != ''">
+            AND status = #{query.status}
+        </if>
+        ORDER BY parent_id ASC, order_num ASC, id ASC
+    </select>
+
+    <select id="countActiveChildren" resultType="long">
+        SELECT COUNT(1)
+        FROM sys_dept
+        WHERE parent_id = #{id}
+          AND del_flag = '0'
+    </select>
+
+    <select id="countEnabledChildren" resultType="long">
+        SELECT COUNT(1)
+        FROM sys_dept
+        WHERE parent_id = #{id}
+          AND status = '0'
+          AND del_flag = '0'
+    </select>
+
+    <select id="countActiveUsers" resultType="long">
+        SELECT COUNT(1)
+        FROM sys_user
+        WHERE dept_id = #{id}
+          AND del_flag = '0'
+    </select>
+
+    <select id="countActiveByParentAndName" resultType="long">
+        SELECT COUNT(1)
+        FROM sys_dept
+        WHERE parent_id = #{parentId}
+          AND dept_name = #{deptName}
+          AND del_flag = '0'
+        <if test="excludeId != null">
+            AND id != #{excludeId}
+        </if>
+    </select>
+</mapper>

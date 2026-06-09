@@ -28,6 +28,9 @@ spring:
         provider:
           keycloak:
             issuer-uri: http://localhost:8080/realms/platform
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/platform
 
 management:
   endpoints:
